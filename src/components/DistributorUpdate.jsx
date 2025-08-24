@@ -2,19 +2,16 @@
 import { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/data/baseurl";
-import UpdateUserForm from "./UpdateUserForm";
+import UpdateDistributorForm from "./UpdateDistributorForm"; // renamed form
 import toast from "react-hot-toast";
-import { FaSearch } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
 import { ImSpinner2 } from "react-icons/im";
 import { IoClose } from "react-icons/io5"; // X icon
-import { FaUserEdit } from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
-import { AiOutlineSearch } from "react-icons/ai";
-import { BiSearch } from "react-icons/bi";
+import { FaSearch } from "react-icons/fa";
 
-const UserUpdate = () => {
+const DistributorUpdate = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState(null);
+  const [distributor, setDistributor] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const formatCNIC = (value) => {
@@ -42,13 +39,13 @@ const UserUpdate = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/users?q=${encodeURIComponent(searchQuery.trim())}`
+        `${BASE_URL}/api/distributors?q=${encodeURIComponent(searchQuery.trim())}`
       );
-      setUser(res.data.data || null);
-      if (!res.data.data) toast.error("User not found.");
+      setDistributor(res.data.data || null);
+      if (!res.data.data) toast.error("Distributor not found.");
     } catch (error) {
-      toast.error("Error searching user.");
-      setUser(null);
+      toast.error("Error searching distributor.");
+      setDistributor(null);
     } finally {
       setLoading(false);
     }
@@ -56,15 +53,16 @@ const UserUpdate = () => {
 
   const handleClear = () => {
     setSearchQuery("");
-    setUser(null);
+    setDistributor(null);
   };
+
   const handleCancel = () => {
-  setUser(null); // close form on cancel
-};
+    setDistributor(null); // close form on cancel
+  };
 
   const handleUpdateSuccess = () => {
-    setUser(null);
-    toast.success("User updated successfully.");
+    setDistributor(null);
+    toast.success("Distributor updated successfully.");
   };
 
   return (
@@ -72,7 +70,7 @@ const UserUpdate = () => {
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6 flex items-center justify-center gap-2">
           <FiSearch className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-          Search & Update User
+          Search & Update Distributor
         </h2>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 relative">
           {/* Input with clear button inside */}
@@ -119,10 +117,10 @@ const UserUpdate = () => {
         </div>
       </div>
 
-      {user && (
+      {distributor && (
         <div className="mt-6 animate-fade-in">
-          <UpdateUserForm
-            userData={user}
+          <UpdateDistributorForm
+            distributorData={distributor}
             onUpdateSuccess={handleUpdateSuccess}
             onCancel={handleCancel}
           />
@@ -132,4 +130,4 @@ const UserUpdate = () => {
   );
 };
 
-export default UserUpdate;
+export default DistributorUpdate;

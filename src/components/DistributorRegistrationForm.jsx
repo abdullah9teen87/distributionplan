@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import axios from "axios";
 import { BASE_URL } from "@/data/baseurl";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 const initialState = {
@@ -24,36 +25,11 @@ const initialState = {
   isVerified: false,
 };
 
-const formatDateForInput = (dateString) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) => {
+const DistributorRegistrationForm = ({ onSubmit }) => {
   const [form, setForm] = useState(initialState);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (distributorData) {
-      setForm({
-        ...initialState,
-        ...distributorData,
-        registrationDate: formatDateForInput(distributorData.registrationDate),
-      });
-    }
-  }, [distributorData]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,27 +59,61 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
     }
 
     setLoading(true);
-    const toastId = toast.loading("Updating distributor...");
+    const toastId = toast.loading("Submitting...");
 
     try {
-      const res = await axios.put(
-        `${BASE_URL}/api/distributors/${distributorData._id}`,
-        form
-      );
+      const res = await axios.post(`${BASE_URL}/api/users`, form);
 
-      if (res.status === 200) {
-        toast.success("Distributor updated successfully!", { id: toastId });
-        if (onUpdateSuccess) onUpdateSuccess();
-      } else {
-        toast.error("Failed to update distributor", { id: toastId });
+      if (res.status === 201) {
+        toast.success("User registered successfully!", { id: toastId });
+        setForm(initialState);
+        if (onSubmit) onSubmit(form);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Update failed.", {
-        id: toastId,
-      });
+      const message =
+        error?.response?.data?.message || "Failed to register user.";
+      toast.error(message, { id: toastId });
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatCNIC = (value) => {
+    // Remove non-digits
+    const digits = value.replace(/\D/g, "").slice(0, 13);
+    // Apply format: 5-7-1
+    if (digits.length <= 5) return digits;
+    if (digits.length <= 12)
+      return `${digits.slice(0, 5)}-${digits.slice(5, 12)}`;
+    return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(
+      12,
+      13
+    )}`;
+  };
+
+  const formatContact = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length <= 4) return digits;
+    return `${digits.slice(0, 4)}-${digits.slice(4, 11)}`;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    let formattedValue = value;
+
+    if (name === "cnicNumber") {
+      formattedValue = formatCNIC(value);
+    }
+
+    if (name === "contactNumber") {
+      formattedValue = formatContact(value);
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : formattedValue,
+    }));
   };
 
   return (
@@ -114,7 +124,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
       >
         <fieldset className="space-y-6 sm:space-y-8">
           <legend className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-2 sm:mb-4">
-            Update Distributor Form
+            User Registration Form
           </legend>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 text-xs sm:text-sm lg:text-base">
@@ -132,16 +142,15 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 label: "CNIC Number",
                 name: "cnicNumber",
                 type: "text",
-                pattern: "\\d{5}-\\d{7}-\\d{1}",
                 placeholder: "12345-1234567-1",
               },
               {
                 label: "Contact Number",
                 name: "contactNumber",
                 type: "text",
-                pattern: "0\\d{3}-\\d{7}",
                 placeholder: "0300-1234567",
               },
+
               { label: "Address", name: "address" },
               {
                 label: "Family Members",
@@ -171,13 +180,16 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                   id={name}
                   value={form[name]}
                   onChange={handleChange}
+                  disabled={loading}
                   {...rest}
-                  className="input-field"
+                  className={`input-field ${
+                    loading ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
                 />
               </div>
             ))}
 
-            {/* Gender */}
+            {/* Gender radio */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Gender</label>
               <div className="flex flex-wrap gap-3">
@@ -189,6 +201,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                       value={option}
                       checked={form.gender === option}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span>{option}</span>
                   </label>
@@ -196,7 +209,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
               </div>
             </div>
 
-            {/* Status */}
+            {/* Status radio */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">
                 Current Status
@@ -210,6 +223,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                       value={option}
                       checked={form.status === option}
                       onChange={handleChange}
+                      disabled={loading}
                     />
                     <span className="capitalize">{option}</span>
                   </label>
@@ -217,7 +231,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
               </div>
             </div>
 
-            {/* Job Status */}
+            {/* Employment Status */}
             <div className="flex flex-col col-span-2 md:col-span-2 lg:col-span-2">
               <label className="text-gray-700 font-medium mb-1">
                 Employment Status
@@ -232,6 +246,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                         value={option}
                         checked={form.jobStatus === option}
                         onChange={handleChange}
+                        disabled={loading}
                       />
                       <span className="capitalize">{option}</span>
                     </label>
@@ -240,9 +255,12 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
               </div>
             </div>
 
-            {/* Detail */}
+            {/* Detail as textarea */}
             <div className="flex flex-col col-span-2 md:col-span-3 lg:col-span-4">
-              <label htmlFor="detail" className="text-gray-700 font-medium mb-1">
+              <label
+                htmlFor="detail"
+                className="text-gray-700 font-medium mb-1"
+              >
                 Detail
               </label>
               <textarea
@@ -251,12 +269,15 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 rows={3}
                 value={form.detail}
                 onChange={handleChange}
-                className="input-field resize-none"
+                disabled={loading}
+                className={`input-field resize-none ${
+                  loading ? "bg-gray-100 cursor-not-allowed" : ""
+                }`}
                 placeholder="Enter detailed notes or remarks..."
               />
             </div>
 
-            {/* Is Verified */}
+            {/* Verified */}
             <div className="flex items-center gap-2 col-span-2 md:col-span-3 lg:col-span-4 mt-2">
               <input
                 type="checkbox"
@@ -264,6 +285,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 checked={form.isVerified}
                 onChange={handleChange}
                 className="h-4 w-4 text-blue-600"
+                disabled={loading}
               />
               <label htmlFor="isVerified" className="text-gray-700 font-medium">
                 Is Verified
@@ -271,33 +293,22 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
             </div>
           </div>
 
-          <div className="flex gap-4 mt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-1/2 py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
-                loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
-            >
-              {loading ? "Updating..." : "Update Distributor"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onCancel && onCancel()}
-              disabled={loading}
-              className="w-1/2 py-2 sm:py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg shadow hover:bg-gray-400 transition text-sm sm:text-base"
-            >
-              Cancel
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {loading ? "Submitting..." : "Register User"}
+          </button>
         </fieldset>
       </form>
     </div>
   );
 };
 
-export default UpdateDistributorForm;
-  
+export default DistributorRegistrationForm;

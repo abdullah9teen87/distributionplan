@@ -1,10 +1,11 @@
-import UserRegistrationForm from '@/components/UserRegistrationForm'
+"use client"
+import DistributorTable from '@/components/AllDistributor'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <UserRegistrationForm />
+        <DistributorTable />
     </div>
   )
 }

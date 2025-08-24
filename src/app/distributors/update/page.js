@@ -1,11 +1,11 @@
 "use client"
-import UserUpdate from '@/components/UserUpdate'
+import DistributorUpdate from '@/components/DistributorUpdate'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <UserUpdate />
+      <DistributorUpdate />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { HiMenu, HiX, HiUser, HiUsers, HiCreditCard } from "react-icons/hi";
+import { HiMenu, HiX, HiUser, HiUsers, HiCreditCard, HiHome } from "react-icons/hi";
 
 const Header = ({ user, onLogin, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +22,10 @@ const Header = ({ user, onLogin, onLogout }) => {
 
           {/* Center: Navigation (desktop only) */}
           <nav className="hidden md:flex space-x-4">
+            <Link href="/" className={buttonClass}>
+              <HiHome size={20} />
+              <span>Home</span>
+            </Link>
             <Link href="/users" className={buttonClass}>
               <HiUser size={20} />
               <span>User</span>
@@ -119,6 +123,17 @@ const Header = ({ user, onLogin, onLogout }) => {
       {menuOpen && (
         <nav className="md:hidden bg-white shadow-md border-t border-gray-200">
           <ul className="flex flex-col px-4 py-3 space-y-2 text-gray-700 font-semibold">
+            <li>
+              {/* Wrap Link inside a clickable block to close menu */}
+              <Link href="/" passHref>
+                <div
+                  onClick={() => setMenuOpen(false)}
+                  className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
+                >
+                  Home
+                </div>
+              </Link>
+            </li>
             <li>
               {/* Wrap Link inside a clickable block to close menu */}
               <Link href="/users" passHref>

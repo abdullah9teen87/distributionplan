@@ -6,7 +6,7 @@ export default function HomePage() {
     <div>
       <div className="p-4 min-w-64 border shadow-sm rounded-lg bg-gray-200">
 
-     <Link rel="icon" href="/users/registration">User Registration</Link>
+
       </div>
     </div>
   );
