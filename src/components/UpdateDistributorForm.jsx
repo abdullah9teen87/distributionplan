@@ -13,13 +13,10 @@ const initialState = {
   fatherHusbandName: "",
   contactNumber: "",
   address: "",
-  familyMembers: "",
   cnicNumber: "",
   detail: "",
-  status: "depending",
-  jobStatus: "unemployed",
-  jobType: "",
-  monthlyIncome: "",
+  status: "working",
+  jobStatus: "employed",
   referalPerson: "",
   isVerified: false,
 };
@@ -67,7 +64,6 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
       "fatherHusbandName",
       "contactNumber",
       "address",
-      "familyMembers",
       "cnicNumber",
       "status",
       "jobStatus",
@@ -143,19 +139,8 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 placeholder: "0300-1234567",
               },
               { label: "Address", name: "address" },
-              {
-                label: "Family Members",
-                name: "familyMembers",
-                type: "number",
-                min: 0,
-                max: 9,
-              },
-              { label: "Job Type", name: "jobType" },
-              {
-                label: "Monthly Income",
-                name: "monthlyIncome",
-                type: "number",
-              },
+             
+            
               { label: "Referral Person", name: "referalPerson" },
             ].map(({ label, name, type = "text", ...rest }) => (
               <div key={name} className="flex flex-col">
@@ -202,7 +187,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 Current Status
               </label>
               <div className="flex flex-wrap gap-3">
-                {["depending", "stable", "death"].map((option) => (
+                {["working", "leaved", "regired"].map((option) => (
                   <label key={option} className="flex items-center space-x-1">
                     <input
                       type="radio"

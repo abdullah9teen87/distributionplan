@@ -1,12 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { HiUser, HiSearch, HiUserAdd } from "react-icons/hi";
+import {
+  HiUser,
+  HiSearch,
+  HiUserAdd,
+  HiViewGrid,
+  HiViewList,
+} from "react-icons/hi";
 import SortableTable from "./SortableTable"; // Your reusable sortable table
 import Link from "next/link";
+import DistributorCardList from "./DistributorCardList";
 
 const DistributorTable = () => {
   const [distributors, setDistributors] = useState([]);
+  const [viewMode, setViewMode] = useState("table"); // or "card"
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10); // page limit selector
@@ -19,7 +28,9 @@ const DistributorTable = () => {
           `/api/distributors?page=${page}&limit=${pageSize}`
         );
         const fetchedDistributors = res?.data?.data?.data;
-        setDistributors(Array.isArray(fetchedDistributors) ? fetchedDistributors : []);
+        setDistributors(
+          Array.isArray(fetchedDistributors) ? fetchedDistributors : []
+        );
         setTotalPages(res.data.totalPages || 1); // fallback to 1
       } catch (err) {
         console.error("Error fetching distributors", err);
@@ -45,13 +56,10 @@ const DistributorTable = () => {
     { header: "Address", accessor: "address" },
     { header: "Status", accessor: "status" },
     { header: "Detail", accessor: "detail" },
-    { header: "Family Members", accessor: "familyMembers" },
     { header: "Father/Husband Name", accessor: "fatherHusbandName" },
     { header: "Gender", accessor: "gender" },
     { header: "Verified", accessor: "isVerified" },
     { header: "Job Status", accessor: "jobStatus" },
-    { header: "Job Type", accessor: "jobType" },
-    { header: "Monthly Income", accessor: "monthlyIncome" },
     { header: "Referral Person", accessor: "referalPerson" },
     { header: "Registration Date", accessor: "registrationDate" },
     { header: "Created At", accessor: "createdAt" },
@@ -67,7 +75,9 @@ const DistributorTable = () => {
       {/* Heading + Buttons container */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
         {/* Heading */}
-        <h1 className="text-2xl font-semibold text-gray-800">Distributor Records</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Distributor Records
+        </h1>
 
         {/* Buttons */}
         <div className="flex items-center gap-3">
@@ -80,7 +90,10 @@ const DistributorTable = () => {
             <span>Add Distributor</span>
           </Link>
           {/* Mobile icon-only Add Distributor */}
-          <Link href="/distributors/registration" className="sm:hidden text-gray-600">
+          <Link
+            href="/distributors/registration"
+            className="sm:hidden text-gray-600"
+          >
             <HiUserAdd size={24} />
           </Link>
 
@@ -98,9 +111,38 @@ const DistributorTable = () => {
           </Link>
         </div>
       </div>
+      <div className="flex items-center justify-end gap-3 mb-6">
+        <button
+          onClick={() => setViewMode("table")}
+          className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
+            viewMode === "table"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+          }`}
+        >
+          <HiViewList size={18} />
+          Table View
+        </button>
+
+        <button
+          onClick={() => setViewMode("card")}
+          className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
+            viewMode === "card"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+          }`}
+        >
+          <HiViewGrid size={18} />
+          Card View
+        </button>
+      </div>
 
       <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 p-2">
-        <SortableTable columns={columns} data={distributors} />
+        {viewMode === "table" ? (
+          <SortableTable columns={columns} data={distributors} />
+        ) : (
+          <DistributorCardList distributors={distributors} />
+        )}
       </div>
 
       <nav className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">

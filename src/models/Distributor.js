@@ -41,12 +41,6 @@ const distributorSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    familyMembers: {
-      type: Number,
-      min: 0,
-      max: 9,
-      required: true,
-    },
     cnicNumber: {
       type: String,
       required: true,
@@ -58,22 +52,13 @@ const distributorSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["depending", "stable", "death"],
-      default: "depending",
+      enum: ["working", "leaved", "retired"],
+      default: "working",
     },
     jobStatus: {
       type: String,
-      enum: ["unemployed", "employed", "retired", "widow"],
-      default: "unemployed",
-    },
-    jobType: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    monthlyIncome: {
-      type: Number,
-      min: 0,
+      enum: ["business", "employed", "unemployed"],
+      default: "employed",
     },
     referalPerson: {
       type: String,

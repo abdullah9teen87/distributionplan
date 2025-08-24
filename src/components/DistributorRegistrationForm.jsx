@@ -14,13 +14,10 @@ const initialState = {
   fatherHusbandName: "",
   contactNumber: "",
   address: "",
-  familyMembers: "",
   cnicNumber: "",
   detail: "",
-  status: "depending",
-  jobStatus: "unemployed",
-  jobType: "",
-  monthlyIncome: "",
+  status: "working",
+  jobStatus: "employed",
   referalPerson: "",
   isVerified: false,
 };
@@ -43,7 +40,6 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
       "fatherHusbandName",
       "contactNumber",
       "address",
-      "familyMembers",
       "cnicNumber",
       "status",
       "jobStatus",
@@ -62,16 +58,16 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
     const toastId = toast.loading("Submitting...");
 
     try {
-      const res = await axios.post(`${BASE_URL}/api/users`, form);
+      const res = await axios.post(`${BASE_URL}/api/distributors`, form);
 
       if (res.status === 201) {
-        toast.success("User registered successfully!", { id: toastId });
+        toast.success("Distributor registered successfully!", { id: toastId });
         setForm(initialState);
         if (onSubmit) onSubmit(form);
       }
     } catch (error) {
       const message =
-        error?.response?.data?.message || "Failed to register user.";
+        error?.response?.data?.message || "Failed to register distributor.";
       toast.error(message, { id: toastId });
     } finally {
       setLoading(false);
@@ -124,7 +120,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
       >
         <fieldset className="space-y-6 sm:space-y-8">
           <legend className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-2 sm:mb-4">
-            User Registration Form
+            Distributor Registration Form
           </legend>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 text-xs sm:text-sm lg:text-base">
@@ -152,19 +148,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
               },
 
               { label: "Address", name: "address" },
-              {
-                label: "Family Members",
-                name: "familyMembers",
-                type: "number",
-                min: 0,
-                max: 9,
-              },
-              { label: "Job Type", name: "jobType" },
-              {
-                label: "Monthly Income",
-                name: "monthlyIncome",
-                type: "number",
-              },
+         
               { label: "Referral Person", name: "referalPerson" },
             ].map(({ label, name, type = "text", ...rest }) => (
               <div key={name} className="flex flex-col">
@@ -215,7 +199,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
                 Current Status
               </label>
               <div className="flex flex-wrap gap-3">
-                {["depending", "stable", "death"].map((option) => (
+                {["working", "leaved", "retired"].map((option) => (
                   <label key={option} className="flex items-center space-x-1">
                     <input
                       type="radio"
@@ -232,12 +216,12 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
             </div>
 
             {/* Employment Status */}
-            <div className="flex flex-col col-span-2 md:col-span-2 lg:col-span-2">
+            <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">
                 Employment Status
               </label>
               <div className="flex flex-wrap gap-4">
-                {["unemployed", "employed", "retired", "widow"].map(
+                {["business", "employed", "unemployed"].map(
                   (option) => (
                     <label key={option} className="flex items-center space-x-1">
                       <input
@@ -303,7 +287,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {loading ? "Submitting..." : "Register User"}
+            {loading ? "Submitting..." : "Register Distributor"}
           </button>
         </fieldset>
       </form>
