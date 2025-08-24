@@ -3,7 +3,7 @@
 "use client";
 import { useMemo, useState } from "react";
 
-const SortableTable = ({ columns, data }) => {
+const PaymentTable = ({ columns, data }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const sortedData = useMemo(() => {
@@ -95,4 +95,4 @@ const SortableTable = ({ columns, data }) => {
   );
 };
 
-export default SortableTable;
+export default PaymentTable;

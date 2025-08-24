@@ -1,11 +1,12 @@
 "use client"
-import DistributorTable from '@/components/AllDistributors'
+
+import AllPayments from '@/components/AllPayments'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <DistributorTable />
+      <AllPayments />
     </div>
   )
 }
