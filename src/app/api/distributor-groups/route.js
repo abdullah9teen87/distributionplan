@@ -8,10 +8,53 @@ import {
   notFoundResponse,
 } from "@/lib/apiResponse";
 
+export async function GET(req) {
+  try {
+    await dbConnect();
+    const url = new URL(req.url);
+
+    const page = parseInt(url.searchParams.get("page") || "1", 10);
+    const limit = parseInt(url.searchParams.get("limit") || "10", 10);
+    const skip = (page - 1) * limit;
+
+    const query = url.searchParams.get("q")?.trim();
+
+    let filter = {};
+    if (query) {
+      // optional: search by distributor name or user name
+      filter = {
+        $or: [
+          { "distributor.name": { $regex: query, $options: "i" } },
+          { "users.user.name": { $regex: query, $options: "i" } },
+        ],
+      };
+    }
+
+    const [total, data] = await Promise.all([
+      DistributorGroup.countDocuments(filter),
+      DistributorGroup.find(filter)
+        .populate("distributor", "name cnicNumber")
+        .populate("users.user", "name cnicNumber contactNumber")
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    
+
+    return successResponse({ data, totalPages }, "Distributor groups fetched");
+  } catch (err) {
+    return errorResponse(err);
+  }
+}
+
+
 // export async function GET(req) {
 //   try {
 //     await dbConnect();
-//     const url = new URL(req.url);
+//     const url = req.nextUrl; // ✅ Next.js App Router fix
 
 //     const page = parseInt(url.searchParams.get("page") || "1", 10);
 //     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
@@ -21,7 +64,6 @@ import {
 
 //     let filter = {};
 //     if (query) {
-//       // optional: search by distributor name or user name
 //       filter = {
 //         $or: [
 //           { "distributor.name": { $regex: query, $options: "i" } },
@@ -30,25 +72,31 @@ import {
 //       };
 //     }
 
-//     const [total, data] = await Promise.all([
-//       DistributorGroup.countDocuments(filter),
-//       DistributorGroup.find(filter)
-//         .populate("distributor", "name cnicNumber")
-//         .populate("users.user", "name cnicNumber contactNumber")
-//         .skip(skip)
-//         .limit(limit)
-//         .lean(),
-//     ]);
+//     const total = await DistributorGroup.countDocuments(filter);
+
+//     const groups = await DistributorGroup.find(filter)
+//       .skip(skip)
+//       .limit(limit)
+//       .populate("distributor", "name cnicNumber") // distributor name
+//       .populate("users.user", "name cnicNumber contactNumber") // populate users
+//       .lean();
+
+//     // Transform data for frontend
+//     const data = groups.map((group) => ({
+//       ...group,
+//       distributorName: group.distributor?.name || "", // safe access
+//       usersCount: group.users?.length || 0,
+//     }));
 
 //     const totalPages = Math.ceil(total / limit);
 
-    
-
 //     return successResponse({ data, totalPages }, "Distributor groups fetched");
 //   } catch (err) {
+//     console.error("GET DistributorGroups Error:", err);
 //     return errorResponse(err);
 //   }
 // }
+
 
 export async function POST(req) {
   try {
