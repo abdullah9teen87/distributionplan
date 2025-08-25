@@ -11,30 +11,33 @@ const distributorSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    gender: {
-      type: String,
-      enum: ["Male", "Female"],
-      required: true,
-    },
     name: {
       type: String,
       required: true,
       trim: true,
-    },
-    age: {
-      type: Number,
-      min: 0,
-      required: true,
     },
     fatherHusbandName: {
       type: String,
       required: true,
       trim: true,
     },
+    gender: {
+      type: String,
+      enum: ["Male", "Female"],
+      required: true,
+    },
+    age: {
+      type: Number,
+      min: 0,
+      required: true,
+    },
     contactNumber: {
       type: String,
       required: true,
-      match: [/^0\d{3}-\d{7}$/, "Invalid contact number format (e.g. 0300-1234567)"],
+      match: [
+        /^0\d{3}-\d{7}$/,
+        "Invalid contact number format (e.g. 0300-1234567)",
+      ],
     },
     address: {
       type: String,
@@ -44,7 +47,10 @@ const distributorSchema = new mongoose.Schema(
     cnicNumber: {
       type: String,
       required: true,
-      match: [/^\d{5}-\d{7}-\d{1}$/, "Invalid CNIC format (e.g. 12345-1234567-1)"],
+      match: [
+        /^\d{5}-\d{7}-\d{1}$/,
+        "Invalid CNIC format (e.g. 12345-1234567-1)",
+      ],
     },
     detail: {
       type: String,
@@ -74,4 +80,5 @@ const distributorSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.models.Distributor || mongoose.model("Distributor", distributorSchema);
+export default mongoose.models.Distributor ||
+  mongoose.model("Distributor", distributorSchema);

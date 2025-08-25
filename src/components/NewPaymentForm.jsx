@@ -10,7 +10,7 @@ const initialState = {
   distributor: "",
   month: "",
   areas: [],
-  users: [], // yeh UserPayment IDs ka array hona chahiye
+  users: [], 
   totalAmount: "",
   returnedAmount: 0,
   status: "handover",

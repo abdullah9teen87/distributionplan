@@ -1,66 +1,69 @@
-// models/DistributorPayment.js
-
 import mongoose from "mongoose";
 const { Schema, model, Types } = mongoose;
 
 const distributorPaymentSchema = new Schema(
   {
-    distributor: {
+    distributorGroup: {
       type: Types.ObjectId,
-      ref: "Distributor",
+      ref: "DistributorGroup", 
       required: true,
     },
     month: {
-      type: String,
+      type: String, 
       required: true,
-      validate: {
-        validator: function (v) {
-          return /^\d{4}-(0[1-9]|1[0-2])$/.test(v);
-        },
-        message: (props) =>
-          `${props.value} is not a valid month format (YYYY-MM)`,
-      },
-    },
-     area: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    users: [
-      {
-        type: Types.ObjectId,
-        ref: "UserPayment",
-        required: true,
-      },
-    ],
-    totalAmount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    returnedAmount: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    status: {
-      type: String,
-      enum: ["handover", "completed"],
-      default: "handover",
-    },
-    isClosedByAdmin: {
-      type: Boolean,
-      default: false,
     },
     remarks: {
       type: String,
       default: "",
     },
+
+    users: [
+      {
+        user: { type: Types.ObjectId, ref: "User", required: true },
+        amount: { type: Number, required: true, min: 0 },  // (is ko get karo group me mojod payment se and edit option daina)
+        status: {
+          type: String,
+          enum: ["paid", "pending", "failed"],
+          default: "pending",
+        },
+        failedremarks: {
+          type: String,
+          default: "",
+        },
+        carryForward: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+
+    totalAmount: { type: Number, default: 0 },
+    paidAmount: { type: Number, default: 0 },
+    pendingAmount: { type: Number, default: 0 },
   },
   {
     timestamps: true,
   }
 );
+
+// 🔹 Calculate summary before save
+distributorPaymentSchema.pre("save", function (next) {
+  let total = 0;
+  let paid = 0;
+  let pending = 0;
+
+  this.users.forEach((u) => {
+    total += u.amount;
+    if (u.status === "paid") paid += u.amount;
+    else pending += u.amount;
+  });
+
+  this.totalAmount = total;
+  this.paidAmount = paid;
+  this.pendingAmount = pending;
+
+  next();
+});
 
 const DistributorPayment =
   mongoose.models.DistributorPayment ||

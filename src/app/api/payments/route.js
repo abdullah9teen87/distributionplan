@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import DistributorPayment from "@/models/DistributorPayment";
+import DistributorPayment from "@/models/DistributorGroup";
 import User from "@/models/User";
 import {
   successResponse,

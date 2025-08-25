@@ -38,6 +38,10 @@ const Header = ({ user, onLogin, onLogout }) => {
               <HiCreditCard size={20} />
               <span>Payment</span>
             </Link>
+            <Link href="/grouppayments" className={buttonClass}>
+              <HiCreditCard size={20} />
+              <span>Group</span>
+            </Link>
           </nav>
 
           {/* Right: Login / Logout (desktop only) */}
