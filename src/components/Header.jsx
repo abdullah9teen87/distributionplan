@@ -15,8 +15,8 @@ const Header = ({ user, onLogin, onLogout }) => {
         <div className="flex items-center h-16 justify-between">
           {/* Left: Logo */}
           <div className="flex-1 flex justify-start">
-            <Link href="/" className="text-xl font-bold text-blue-600 cursor-pointer">
-              YourBrand
+            <Link href="/" className="text-xl font-bold text-gray-600 uppercase cursor-pointer">
+              Distribution Plan
             </Link>
           </div>
 

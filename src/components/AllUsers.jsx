@@ -6,11 +6,13 @@ import SortableTable from "./SortableTable"; // Your reusable sortable table
 import Link from "next/link";
 import UserCardList from "./UserCardList";
 import { HiViewGrid, HiViewList } from "react-icons/hi";
+import { BASE_URL } from "@/data/baseurl";
+import TableSkeleton from "./TableSkeleton";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [viewMode, setViewMode] = useState("table"); // default view
-
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10); // page limit selector
@@ -18,15 +20,17 @@ const UserTable = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(
-          `/api/users?page=${page}&limit=${pageSize}`
+          `${BASE_URL}/api/users?page=${page}&limit=${pageSize}`
         );
-        const fetchedUsers = res?.data?.data?.data;
-        setUsers(Array.isArray(fetchedUsers) ? fetchedUsers : []);
-        setTotalPages(res.data.totalPages || 1); // fallback to 1
+        setUsers(res.data?.data?.data || []);
+        setTotalPages(res.data?.totalPages || 1);
       } catch (err) {
         console.error("Error fetching users", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -129,7 +133,9 @@ const UserTable = () => {
       </div>
 
       <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 p-2">
-        {viewMode === "table" ? (
+        {loading ? (
+          <TableSkeleton columns={columns} rows={8} />
+        ) : viewMode === "table" ? (
           <SortableTable columns={columns} data={users} />
         ) : (
           <UserCardList users={users} />
