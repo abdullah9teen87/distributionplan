@@ -76,24 +76,24 @@ const AllGroups = () => {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/grouppayments/newgroup"
+            href="/group/newgroup"
             className="hidden sm:flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm"
           >
             <HiPlusCircle size={20} />
             <span>New Group</span>
           </Link>
-          <Link href="/grouppayments/newgroup" className="sm:hidden text-gray-600">
+          <Link href="/group/newgroup" className="sm:hidden text-gray-600">
             <HiPlusCircle size={24} />
           </Link>
 
           <Link
-            href="/grouppayments/search"
+            href="/group/search"
             className="hidden sm:flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow transition text-sm"
           >
             <HiSearch size={20} />
             <span>Search Group</span>
           </Link>
-          <Link href="/grouppayments/search" className="sm:hidden text-gray-800">
+          <Link href="/group/search" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>

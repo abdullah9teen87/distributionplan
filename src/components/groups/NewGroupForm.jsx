@@ -5,6 +5,8 @@ import { BASE_URL } from "@/data/baseurl";
 import toast from "react-hot-toast";
 import AreaMultiSelect from "../AreaMultiSelect"; // tumne already banaya hai
 import { AiOutlineClose } from "react-icons/ai";
+import { HiUserAdd } from "react-icons/hi";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   distributor: "",
@@ -18,7 +20,7 @@ const NewGroupForm = ({ onSubmit }) => {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [distributors, setDistributors] = useState([]);
-
+  const router = useRouter();
   // 🔎 user search
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState(null);
@@ -64,9 +66,6 @@ const NewGroupForm = ({ onSubmit }) => {
     }, 0);
     setForm((prev) => ({ ...prev, totalAmount: total.toFixed(2) }));
   }, [form.users]);
-
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,48 +115,47 @@ const NewGroupForm = ({ onSubmit }) => {
     setForm((prev) => ({ ...prev, users: updated }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  const toastId = toast.loading("Creating group...");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const toastId = toast.loading("Creating group...");
 
-  try {
-    // payload prepare karte waqt console log
-    const payload = {
-      distributor: form.distributor,
-      areas: form.areas,
-      users: form.users.map((u) => ({
-        user: u._id,
-        amount: parseFloat(u.amount) || 0,
-      })),
-      totalAmount: parseFloat(form.totalAmount) || 0,
-      remarks: form.remarks,
-    };
+    try {
+      // payload prepare karte waqt console log
+      const payload = {
+        distributor: form.distributor,
+        areas: form.areas,
+        users: form.users.map((u) => ({
+          user: u._id,
+          amount: parseFloat(u.amount) || 0,
+        })),
+        totalAmount: parseFloat(form.totalAmount) || 0,
+        remarks: form.remarks,
+      };
 
-    console.log("Payload being sent to API:", payload);
+      console.log("Payload being sent to API:", payload);
 
-    const res = await axios.post(
-      `${BASE_URL}/api/distributor-groups`,
-      payload
-    );
+      const res = await axios.post(
+        `${BASE_URL}/api/distributor-groups`,
+        payload
+      );
 
-    console.log("Response from API:", res);
+      console.log("Response from API:", res);
 
-    if (res.status === 201) {
-      toast.success("Group created successfully!", { id: toastId });
-      setForm(initialState);
-      if (onSubmit) onSubmit(payload);
+      if (res.status === 201) {
+        toast.success("Group created successfully!", { id: toastId });
+        setForm(initialState);
+        if (onSubmit) onSubmit(payload);
+      }
+    } catch (err) {
+      console.error("Error creating group:", err?.response || err);
+      toast.error(err?.response?.data?.message || "Failed to create group", {
+        id: toastId,
+      });
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Error creating group:", err?.response || err);
-    toast.error(err?.response?.data?.message || "Failed to create group", {
-      id: toastId,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="w-full bg-gradient-to-br from-[#f8fafc] via-[#fefefe] to-[#e2e8f0] px-2 sm:px-4 py-4">
@@ -234,9 +232,10 @@ const handleSubmit = async (e) => {
                 <button
                   type="button"
                   onClick={handleAddUser}
-                  className=" px-3 py-1 bg-gray-600 text-white rounded-lg text-sm"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm transition"
                 >
-                  + Add User
+                  <HiUserAdd size={18} />
+                  <span>Add User</span>
                 </button>
               </div>
             )}
@@ -299,15 +298,14 @@ const handleSubmit = async (e) => {
 
           {/* TotalAmount */}
           <div className="flex flex-col">
-            {" "}
-            <label className="font-medium mb-1">Total Amount</label>{" "}
+            <label className="font-medium mb-1">Total Amount</label>
             <input
               type="number"
               name="totalAmount"
               value={form.totalAmount}
               readOnly
               className="input-field bg-gray-100 cursor-not-allowed"
-            />{" "}
+            />
           </div>
 
           {/* Remarks */}
@@ -323,18 +321,29 @@ const handleSubmit = async (e) => {
               placeholder="Enter remarks..."
             />
           </div>
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
-              loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Submitting..." : "Create Group"}
-          </button>
+
+          <div className="grid grid-cols-2  items-center justify-between gap-3 sm:gap-4 mt-2">
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {loading ? "Submitting..." : "Create Group"}
+            </button>
+
+            <button
+              type="button"
+              className="w-full py-2 sm:py-3 text-blue-600 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
+              onClick={() => router.back()}
+            >
+              Cancel
+            </button>
+          </div>
         </fieldset>
       </form>
     </div>
