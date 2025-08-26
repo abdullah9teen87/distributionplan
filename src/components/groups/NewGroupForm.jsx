@@ -70,6 +70,7 @@ const NewGroupForm = ({ onSubmit }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    
   };
 
   // user search
@@ -84,7 +85,7 @@ const NewGroupForm = ({ onSubmit }) => {
       if (!res.data.data) toast.error("User not found.");
     } catch (error) {
       toast.error("User Not Registered.");
-      setUser(null);
+      // setUser(null);
     } finally {
       setLoading(false);
     }

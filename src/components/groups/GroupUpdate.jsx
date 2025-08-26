@@ -2,12 +2,12 @@
 import { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/data/baseurl";
-import UpdateGroupForm from "./UpdateGroupForm"; // make this like UpdateDistributorForm
 import toast from "react-hot-toast";
 import { FiSearch } from "react-icons/fi";
 import { ImSpinner2 } from "react-icons/im";
 import { IoClose } from "react-icons/io5"; 
 import { FaSearch } from "react-icons/fa";
+import UpdateGroupForm from "./UpdateGroupForm";
 
 const GroupUpdate = () => {
   const [searchQuery, setSearchQuery] = useState("");

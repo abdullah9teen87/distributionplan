@@ -9,19 +9,14 @@ import {
 } from "@/lib/apiResponse";
 
 export async function GET(req) {
-  console.log("step 1", req.url);
   try {
     await dbConnect();
     const url = new URL(req.url);
-    console.log("step 1");
     const page = parseInt(url.searchParams.get("page") || "1", 10);
     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
     const skip = (page - 1) * limit;
-    console.log("step 2");
 
     const query = url.searchParams.get("q")?.trim();
-    console.log("step 3.1", query);
-    console.log("step 3");
 
     // 🔍 If query provided → single group search
     if (query) {
@@ -39,11 +34,9 @@ export async function GET(req) {
           .populate("users.user", "name cnicNumber contactNumber")
           .lean();
 
-        console.log("step 4", group);
       } catch {
         // ignore invalid ObjectId format
       }
-      console.log("step 5");
 
       // 2) Try by distributor name / cnic
       if (!group) {
@@ -64,7 +57,6 @@ export async function GET(req) {
             .lean();
         }
       }
-      console.log("step 6");
 
       // 3) Try by user name / cnic
       if (!group) {
@@ -75,7 +67,6 @@ export async function GET(req) {
             { contactNumber: query },
           ],
         }).lean();
-        console.log("step 7");
 
         if (user) {
           group = await DistributorGroup.findOne({ "users.user": user._id })
@@ -83,14 +74,11 @@ export async function GET(req) {
             .populate("users.user", "name cnicNumber contactNumber")
             .lean();
         }
-        console.log("step 8");
       }
-      console.log("step 9");
 
       if (!group) return notFoundResponse("Group not found");
       return successResponse(group, "Group fetched successfully");
     }
-    console.log("step 10");
 
     // 📄 No query → paginated list
     const [total, data] = await Promise.all([

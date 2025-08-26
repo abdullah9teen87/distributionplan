@@ -55,12 +55,11 @@ const AllGroups = () => {
   }, [totalPages, page]);
 
   const columns = [
-    { header: "Distributor ID", accessor: "distributor" },
+    { header: "Distributor ID", accessor: "distributor._id" },
     { header: "Distributor", accessor: "distributor.name" },
     { header: "Areas", accessor: "areas" },
     { header: "Total Amount", accessor: "totalAmount" },
     { header: "Users Count", accessor: "users.length" },
-    // { header: "Users Amount", accessor: "users.amount" },
     { header: "Remarks", accessor: "remarks" },
     { header: "Created At", accessor: "createdAt" },
   ];
