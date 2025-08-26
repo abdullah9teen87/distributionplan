@@ -1,38 +1,101 @@
 import dbConnect from "@/lib/dbConnect";
 import DistributorGroup from "@/models/DistributorGroup";
+import Distributor from "@/models/Distributor"; // ✅ chahiye hoga
+import User from "@/models/User"; // ✅ agar user search karna hai
 import {
   successResponse,
-  createdResponse,
   errorResponse,
-  conflictResponse,
   notFoundResponse,
 } from "@/lib/apiResponse";
 
 export async function GET(req) {
+  console.log("step 1", req.url);
   try {
     await dbConnect();
     const url = new URL(req.url);
-
+    console.log("step 1");
     const page = parseInt(url.searchParams.get("page") || "1", 10);
     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
     const skip = (page - 1) * limit;
+    console.log("step 2");
 
     const query = url.searchParams.get("q")?.trim();
+    console.log("step 3.1", query);
+    console.log("step 3");
 
-    let filter = {};
+    // 🔍 If query provided → single group search
     if (query) {
-      // optional: search by distributor name or user name
-      filter = {
-        $or: [
-          { "distributor.name": { $regex: query, $options: "i" } },
-          { "users.user.name": { $regex: query, $options: "i" } },
-        ],
-      };
-    }
+      let group = null;
 
+      // 1) Try direct by _id
+      try {
+        // group = await DistributorGroup.findById(query)
+        //   .populate("distributor", "name cnicNumber _id")
+        //   .populate("users.user", "name cnicNumber contactNumber")
+        //   .lean();
+
+        group = await DistributorGroup.findOne({ distributor: query })
+          .populate("distributor", "name cnicNumber contactNumber")
+          .populate("users.user", "name cnicNumber contactNumber")
+          .lean();
+
+        console.log("step 4", group);
+      } catch {
+        // ignore invalid ObjectId format
+      }
+      console.log("step 5");
+
+      // 2) Try by distributor name / cnic
+      if (!group) {
+        const distributor = await Distributor.findOne({
+          $or: [
+            { name: { $regex: query, $options: "i" } },
+            { cnicNumber: query },
+          ],
+        }).lean();
+
+        if (distributor) {
+          console.log("step 6.1");
+          group = await DistributorGroup.findOne({
+            distributor: distributor._id,
+          })
+            .populate("distributor", "name cnicNumber ")
+            .populate("users.user", "name cnicNumber contactNumber")
+            .lean();
+        }
+      }
+      console.log("step 6");
+
+      // 3) Try by user name / cnic
+      if (!group) {
+        const user = await User.findOne({
+          $or: [
+            { name: { $regex: query, $options: "i" } },
+            { cnicNumber: query },
+            { contactNumber: query },
+          ],
+        }).lean();
+        console.log("step 7");
+
+        if (user) {
+          group = await DistributorGroup.findOne({ "users.user": user._id })
+            .populate("distributor", "name cnicNumber")
+            .populate("users.user", "name cnicNumber contactNumber")
+            .lean();
+        }
+        console.log("step 8");
+      }
+      console.log("step 9");
+
+      if (!group) return notFoundResponse("Group not found");
+      return successResponse(group, "Group fetched successfully");
+    }
+    console.log("step 10");
+
+    // 📄 No query → paginated list
     const [total, data] = await Promise.all([
-      DistributorGroup.countDocuments(filter),
-      DistributorGroup.find(filter)
+      DistributorGroup.countDocuments(),
+      DistributorGroup.find()
         .populate("distributor", "name cnicNumber")
         .populate("users.user", "name cnicNumber contactNumber")
         .skip(skip)
@@ -42,61 +105,11 @@ export async function GET(req) {
 
     const totalPages = Math.ceil(total / limit);
 
-    
-
     return successResponse({ data, totalPages }, "Distributor groups fetched");
   } catch (err) {
     return errorResponse(err);
   }
 }
-
-
-// export async function GET(req) {
-//   try {
-//     await dbConnect();
-//     const url = req.nextUrl; // ✅ Next.js App Router fix
-
-//     const page = parseInt(url.searchParams.get("page") || "1", 10);
-//     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
-//     const skip = (page - 1) * limit;
-
-//     const query = url.searchParams.get("q")?.trim();
-
-//     let filter = {};
-//     if (query) {
-//       filter = {
-//         $or: [
-//           { "distributor.name": { $regex: query, $options: "i" } },
-//           { "users.user.name": { $regex: query, $options: "i" } },
-//         ],
-//       };
-//     }
-
-//     const total = await DistributorGroup.countDocuments(filter);
-
-//     const groups = await DistributorGroup.find(filter)
-//       .skip(skip)
-//       .limit(limit)
-//       .populate("distributor", "name cnicNumber") // distributor name
-//       .populate("users.user", "name cnicNumber contactNumber") // populate users
-//       .lean();
-
-//     // Transform data for frontend
-//     const data = groups.map((group) => ({
-//       ...group,
-//       distributorName: group.distributor?.name || "", // safe access
-//       usersCount: group.users?.length || 0,
-//     }));
-
-//     const totalPages = Math.ceil(total / limit);
-
-//     return successResponse({ data, totalPages }, "Distributor groups fetched");
-//   } catch (err) {
-//     console.error("GET DistributorGroups Error:", err);
-//     return errorResponse(err);
-//   }
-// }
-
 
 export async function POST(req) {
   try {
@@ -132,8 +145,8 @@ export async function POST(req) {
     const group = await DistributorGroup.create({
       distributor,
       areas,
-      users, 
-      totalAmount: totalAmount, 
+      users,
+      totalAmount: totalAmount,
       remarks,
     });
 

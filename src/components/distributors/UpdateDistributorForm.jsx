@@ -187,7 +187,7 @@ const UpdateDistributorForm = ({ distributorData, onUpdateSuccess, onCancel }) =
                 Current Status
               </label>
               <div className="flex flex-wrap gap-3">
-                {["working", "leaved", "regired"].map((option) => (
+                {["working", "leaved", "retired"].map((option) => (
                   <label key={option} className="flex items-center space-x-1">
                     <input
                       type="radio"

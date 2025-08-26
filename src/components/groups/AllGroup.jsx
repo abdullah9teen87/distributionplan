@@ -55,11 +55,12 @@ const AllGroups = () => {
   }, [totalPages, page]);
 
   const columns = [
+    { header: "Distributor ID", accessor: "distributor" },
     { header: "Distributor", accessor: "distributor.name" },
     { header: "Areas", accessor: "areas" },
     { header: "Total Amount", accessor: "totalAmount" },
     { header: "Users Count", accessor: "users.length" },
-    { header: "Users Amount", accessor: "users.amount" },
+    // { header: "Users Amount", accessor: "users.amount" },
     { header: "Remarks", accessor: "remarks" },
     { header: "Created At", accessor: "createdAt" },
   ];
@@ -87,13 +88,13 @@ const AllGroups = () => {
           </Link>
 
           <Link
-            href="/group/search"
+            href="/group/update"
             className="hidden sm:flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow transition text-sm"
           >
             <HiSearch size={20} />
             <span>Search Group</span>
           </Link>
-          <Link href="/group/search" className="sm:hidden text-gray-800">
+          <Link href="/group/update" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>

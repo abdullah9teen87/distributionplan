@@ -81,27 +81,27 @@ const UserTable = () => {
         <div className="flex items-center gap-3">
           {/* Add User Button */}
           <Link
-            href="/users/registration"
+            href="/user/registration"
             className="hidden sm:flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm"
           >
             <HiUserAdd size={20} />
             <span>Add User</span>
           </Link>
           {/* Mobile icon-only Add User (optional) */}
-          <Link href="/users/registration" className="sm:hidden text-gray-600">
+          <Link href="/user/registration" className="sm:hidden text-gray-600">
             <HiUserAdd size={24} />
           </Link>
 
           {/* Search User Button */}
           <Link
-            href="/users/update"
+            href="/user/update"
             className="hidden sm:flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow transition text-sm"
           >
             <HiSearch size={20} />
             <span>Search User</span>
           </Link>
           {/* Mobile icon-only Search */}
-          <Link href="/users/update" className="sm:hidden text-gray-800">
+          <Link href="/user/update" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>
