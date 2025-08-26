@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/data/baseurl";
 import toast from "react-hot-toast";
-import AreaMultiSelect from "./AreaMultiSelect"; // tumne already banaya hai
+import AreaMultiSelect from "../AreaMultiSelect"; // tumne already banaya hai
 import { AiOutlineClose } from "react-icons/ai";
 
 const initialState = {

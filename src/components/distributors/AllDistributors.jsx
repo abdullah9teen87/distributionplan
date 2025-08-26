@@ -217,11 +217,11 @@ import {
   HiViewGrid,
   HiViewList,
 } from "react-icons/hi";
-import SortableTable from "./SortableTable";
+import SortableTable from "../SortableTable";
 import Link from "next/link";
 import DistributorCardList from "./DistributorCardList";
-import TableSkeleton from "./TableSkeleton"; // ✅ import skeleton
-import CardSkeleton from "./CardSkeleton";   // ✅ import card skeleton
+import TableSkeleton from "../TableSkeleton"; // ✅ import skeleton
+import CardSkeleton from "../CardSkeleton";   // ✅ import card skeleton
 
 const DistributorTable = () => {
   const [distributors, setDistributors] = useState([]);

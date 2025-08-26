@@ -1,4 +1,4 @@
-import DistributorRegistrationForm from '@/components/DistributorRegistrationForm'
+import DistributorRegistrationForm from '@/components/distributors/DistributorRegistrationForm'
 import React from 'react'
 
 function page() {

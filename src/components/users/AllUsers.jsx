@@ -1,65 +1,67 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  HiSearch,
-  HiPlusCircle,
-  HiViewGrid,
-  HiViewList,
-} from "react-icons/hi";
-import SortableTable from "./SortableTable"; 
+import { HiUser, HiSearch, HiUserAdd } from "react-icons/hi";
+import SortableTable from "../SortableTable"; // Your reusable sortable table
 import Link from "next/link";
-import PaymentCardList from "./PaymentCardList"; 
+import UserCardList from "./UserCardList";
+import { HiViewGrid, HiViewList } from "react-icons/hi";
 import { BASE_URL } from "@/data/baseurl";
-import TableSkeleton from "./TableSkeleton";
-import CardSkeleton from "./CardSkeleton";
+import TableSkeleton from "../TableSkeleton";
 
-const AllGroups = () => {
-  const [groups, setGroups] = useState([]);
-  const [viewMode, setViewMode] = useState("table");
+const UserTable = () => {
+  const [users, setUsers] = useState([]);
+  const [viewMode, setViewMode] = useState("table"); // default view
   const [loading, setLoading] = useState(true);
-
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const PAGE_SIZE_OPTIONS = [5, 10, 25, 50];
+  const [pageSize, setPageSize] = useState(10); // page limit selector
+  const PAGE_SIZE_OPTIONS = [5, 10, 25, 50]; // available page sizes
 
-  // fetch groups
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchUsers = async () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `${BASE_URL}/api/distributor-groups?page=${page}&limit=${pageSize}`
+          `${BASE_URL}/api/users?page=${page}&limit=${pageSize}`
         );
-        // console.error("Response", res?.data?.data);
-        setGroups(res?.data?.data?.data || []);
-
-        setTotalPages(res?.data?.data?.totalPages || 1);
+        setUsers(res.data?.data?.data || []);
+        setTotalPages(res.data?.totalPages || 1);
       } catch (err) {
-        if (err.response?.status === 404) {
-          setGroups([]);
-        } else {
-          console.error("Error fetching groups", err);
-        }
+        console.error("Error fetching users", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchGroups();
+    fetchUsers();
   }, [page, pageSize]);
 
+  // Reset page if it exceeds totalPages
   useEffect(() => {
-    if (page > totalPages) setPage(1);
+    if (page > totalPages) {
+      setPage(1);
+    }
   }, [totalPages, page]);
 
   const columns = [
-    { header: "Distributor", accessor: "distributor.name" },
-    { header: "Areas", accessor: "areas" },
-    { header: "Total Amount", accessor: "totalAmount" },
-    { header: "Users Count", accessor: "users.length" },
-    { header: "Remarks", accessor: "remarks" },
+    { header: "Reg. No.", accessor: "registrationNumber" },
+    { header: "Name", accessor: "name" },
+    { header: "Age", accessor: "age" },
+    { header: "Mobile", accessor: "contactNumber" },
+    { header: "CNIC", accessor: "cnicNumber" },
+    { header: "Address", accessor: "address" },
+    { header: "Status", accessor: "status" },
+    { header: "Detail", accessor: "detail" },
+    { header: "Family Members", accessor: "familyMembers" },
+    { header: "Father/Husband Name", accessor: "fatherHusbandName" },
+    { header: "Gender", accessor: "gender" },
+    { header: "Verified", accessor: "isVerified" },
+    { header: "Job Status", accessor: "jobStatus" },
+    { header: "Job Type", accessor: "jobType" },
+    { header: "Monthly Income", accessor: "monthlyIncome" },
+    { header: "Referral Person", accessor: "referalPerson" },
+    { header: "Registration Date", accessor: "registrationDate" },
     { header: "Created At", accessor: "createdAt" },
   ];
 
@@ -70,34 +72,40 @@ const AllGroups = () => {
 
   return (
     <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Heading + Buttons container */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Distributor Groups</h1>
+        {/* Heading */}
+        <h1 className="text-2xl font-semibold text-gray-800">User Records</h1>
 
+        {/* Buttons */}
         <div className="flex items-center gap-3">
+          {/* Add User Button */}
           <Link
-            href="/grouppayments/newgroup"
+            href="/users/registration"
             className="hidden sm:flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm"
           >
-            <HiPlusCircle size={20} />
-            <span>New Group</span>
+            <HiUserAdd size={20} />
+            <span>Add User</span>
           </Link>
-          <Link href="/grouppayments/newgroup" className="sm:hidden text-gray-600">
-            <HiPlusCircle size={24} />
+          {/* Mobile icon-only Add User (optional) */}
+          <Link href="/users/registration" className="sm:hidden text-gray-600">
+            <HiUserAdd size={24} />
           </Link>
 
+          {/* Search User Button */}
           <Link
-            href="/grouppayments/search"
+            href="/users/update"
             className="hidden sm:flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow transition text-sm"
           >
             <HiSearch size={20} />
-            <span>Search Group</span>
+            <span>Search User</span>
           </Link>
-          <Link href="/grouppayments/search" className="sm:hidden text-gray-800">
+          {/* Mobile icon-only Search */}
+          <Link href="/users/update" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>
       </div>
-
       <div className="flex items-center justify-end gap-3 mb-6">
         <button
           onClick={() => setViewMode("table")}
@@ -107,8 +115,10 @@ const AllGroups = () => {
               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
           }`}
         >
-          <HiViewList size={18} /> Table View
+          <HiViewList size={18} />
+          Table View
         </button>
+
         <button
           onClick={() => setViewMode("card")}
           className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
@@ -117,25 +127,23 @@ const AllGroups = () => {
               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
           }`}
         >
-          <HiViewGrid size={18} /> Card View
+          <HiViewGrid size={18} />
+          Card View
         </button>
       </div>
 
       <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 p-2">
         {loading ? (
-          viewMode === "table" ? (
-            <TableSkeleton columns={columns} rows={8} />
-          ) : (
-            <CardSkeleton count={6} />
-          )
+          <TableSkeleton columns={columns} rows={8} />
         ) : viewMode === "table" ? (
-          <SortableTable columns={columns} data={groups} />
+          <SortableTable columns={columns} data={users} />
         ) : (
-          <PaymentCardList payments={groups} />
+          <UserCardList users={users} />
         )}
       </div>
 
       <nav className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+        {/* Pagination Controls */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
@@ -150,7 +158,11 @@ const AllGroups = () => {
           </button>
 
           <span className="text-gray-700 font-medium">
-            Page <span className="font-bold">{page}</span> of <span className="font-bold">{totalPages}</span>
+            Page <span className="font-bold">{isNaN(page) ? "1" : page}</span>{" "}
+            of{" "}
+            <span className="font-bold">
+              {isNaN(totalPages) ? "1" : totalPages}
+            </span>
           </span>
 
           <button
@@ -166,6 +178,7 @@ const AllGroups = () => {
           </button>
         </div>
 
+        {/* Rows per page */}
         <div className="flex items-center justify-center sm:justify-end gap-2">
           <label htmlFor="pageSize" className="text-gray-700 font-medium">
             Rows per page:
@@ -177,7 +190,9 @@ const AllGroups = () => {
             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
-              <option key={size} value={size}>{size}</option>
+              <option key={size} value={size}>
+                {size}
+              </option>
             ))}
           </select>
         </div>
@@ -186,4 +201,4 @@ const AllGroups = () => {
   );
 };
 
-export default AllGroups;
+export default UserTable;

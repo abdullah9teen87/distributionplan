@@ -1,5 +1,5 @@
 "use client"
-import AllGroups from '@/components/AllGroup'
+import AllGroups from '@/components/groups/AllGroup'
 import React from 'react'
 
 function page() {

@@ -295,7 +295,7 @@ const UpdateUserForm = ({ userData, onUpdateSuccess, onCancel }) => {
               type="button"
               onClick={() => onCancel && onCancel()}
               disabled={loading}
-              className="w-1/2 py-2 sm:py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg shadow hover:bg-gray-400 transition text-sm sm:text-base"
+              className="w-1/2 py-2 sm:py-3 bg-white text-gray-600 border border-gray-400 font-semibold rounded-lg shadow-md hover:bg-gray-400 transition text-sm sm:text-base"
             >
               Cancel
             </button>

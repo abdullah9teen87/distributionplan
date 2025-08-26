@@ -1,18 +1,18 @@
-
-
 "use client";
 import { useMemo, useState } from "react";
 
-const PaymentTable = ({ columns, data }) => {
+const MultiTable = ({ columns, data }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return data;
     return [...data].sort((a, b) => {
-      const aVal = a[sortConfig.key];
-      const bVal = b[sortConfig.key];
+      const aVal = getValue(a, sortConfig.key);
+      const bVal = getValue(b, sortConfig.key);
+
       if (aVal === null || aVal === undefined) return 1;
       if (bVal === null || bVal === undefined) return -1;
+
       const aStr = aVal.toString().toLowerCase();
       const bStr = bVal.toString().toLowerCase();
       if (aStr < bStr) return sortConfig.direction === "asc" ? -1 : 1;
@@ -34,6 +34,30 @@ const PaymentTable = ({ columns, data }) => {
         ? " ▲"
         : " ▼"
       : "";
+
+  const getValue = (obj, accessor) => {
+    if (!obj) return "";
+
+    const keys = accessor.split(".");
+
+    return keys.reduce((acc, key, idx) => {
+      if (acc == null) return "";
+
+      // agar array h to check karo
+      if (Array.isArray(acc)) {
+        if (key === "length") {
+          return acc.length;
+        }
+        // agar array ke objects ka sum chahiye (e.g., users.amount)
+        if (idx === keys.length - 1) {
+          return acc.reduce((sum, item) => sum + (item[key] || 0), 0);
+        }
+        return acc.map((item) => item[key]);
+      }
+
+      return acc[key];
+    }, obj);
+  };
 
   return (
     <table className="w-full border-collapse border border-gray-300 table-auto rounded-md overflow-hidden">
@@ -79,12 +103,12 @@ const PaymentTable = ({ columns, data }) => {
                 <td
                   key={accessor}
                   className="p-3 border border-gray-300 text-gray-600
-                    text-[9px] sm:text-[10px] md:text-[12px] lg:text-sm
-                    whitespace-nowrap truncate capitalize"
+      text-[9px] sm:text-[10px] md:text-[12px] lg:text-sm
+      whitespace-nowrap truncate capitalize"
                   style={{ maxWidth: 180 }}
-                  title={row[accessor]?.toString() ?? ""}
+                  title={getValue(row, accessor)?.toString() ?? ""}
                 >
-                  {row[accessor]?.toString() ?? ""}
+                  {getValue(row, accessor)?.toString() ?? ""}
                 </td>
               ))}
             </tr>
@@ -95,4 +119,4 @@ const PaymentTable = ({ columns, data }) => {
   );
 };
 
-export default PaymentTable;
+export default MultiTable;

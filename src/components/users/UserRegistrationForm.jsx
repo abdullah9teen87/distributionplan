@@ -1,6 +1,7 @@
 "use client";
 import { BASE_URL } from "@/data/baseurl";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -14,15 +15,18 @@ const initialState = {
   fatherHusbandName: "",
   contactNumber: "",
   address: "",
+  familyMembers: "",
   cnicNumber: "",
   detail: "",
-  status: "working",
-  jobStatus: "employed",
+  status: "depending",
+  jobStatus: "unemployed",
+  jobType: "",
+  monthlyIncome: "",
   referalPerson: "",
   isVerified: false,
 };
 
-const DistributorRegistrationForm = ({ onSubmit }) => {
+const UserRegistrationForm = ({ onSubmit }) => {
   const [form, setForm] = useState(initialState);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,6 +44,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
       "fatherHusbandName",
       "contactNumber",
       "address",
+      "familyMembers",
       "cnicNumber",
       "status",
       "jobStatus",
@@ -58,16 +63,16 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
     const toastId = toast.loading("Submitting...");
 
     try {
-      const res = await axios.post(`${BASE_URL}/api/distributors`, form);
+      const res = await axios.post(`${BASE_URL}/api/users`, form);
 
       if (res.status === 201) {
-        toast.success("Distributor registered successfully!", { id: toastId });
+        toast.success("User registered successfully!", { id: toastId });
         setForm(initialState);
         if (onSubmit) onSubmit(form);
       }
     } catch (error) {
       const message =
-        error?.response?.data?.message || "Failed to register distributor.";
+        error?.response?.data?.message || "Failed to register user.";
       toast.error(message, { id: toastId });
     } finally {
       setLoading(false);
@@ -120,7 +125,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
       >
         <fieldset className="space-y-6 sm:space-y-8">
           <legend className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-2 sm:mb-4">
-            Distributor Registration Form
+            User Registration Form
           </legend>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 text-xs sm:text-sm lg:text-base">
@@ -148,7 +153,19 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
               },
 
               { label: "Address", name: "address" },
-         
+              {
+                label: "Family Members",
+                name: "familyMembers",
+                type: "number",
+                min: 0,
+                max: 9,
+              },
+              { label: "Job Type", name: "jobType" },
+              {
+                label: "Monthly Income",
+                name: "monthlyIncome",
+                type: "number",
+              },
               { label: "Referral Person", name: "referalPerson" },
             ].map(({ label, name, type = "text", ...rest }) => (
               <div key={name} className="flex flex-col">
@@ -199,7 +216,7 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
                 Current Status
               </label>
               <div className="flex flex-wrap gap-3">
-                {["working", "leaved", "retired"].map((option) => (
+                {["depending", "stable", "death"].map((option) => (
                   <label key={option} className="flex items-center space-x-1">
                     <input
                       type="radio"
@@ -216,12 +233,12 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
             </div>
 
             {/* Employment Status */}
-            <div className="flex flex-col">
+            <div className="flex flex-col col-span-2 md:col-span-2 lg:col-span-2">
               <label className="text-gray-700 font-medium mb-1">
                 Employment Status
               </label>
               <div className="flex flex-wrap gap-4">
-                {["business", "employed", "unemployed"].map(
+                {["unemployed", "employed", "retired", "widow"].map(
                   (option) => (
                     <label key={option} className="flex items-center space-x-1">
                       <input
@@ -278,21 +295,30 @@ const DistributorRegistrationForm = ({ onSubmit }) => {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
-              loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Submitting..." : "Register Distributor"}
-          </button>
+          <div className="grid grid-cols-2  items-center justify-between gap-3 sm:gap-4 mt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {loading ? "Submitting..." : "Register User"}
+            </button>
+            <button
+              type="button" 
+              className="w-full py-2 sm:py-3 text-blue-600 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
+              onClick={() => router.back()}
+            >
+              Cancel
+            </button>
+          </div>
         </fieldset>
       </form>
     </div>
   );
 };
 
-export default DistributorRegistrationForm;
+export default UserRegistrationForm;

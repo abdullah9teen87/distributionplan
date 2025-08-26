@@ -1,5 +1,5 @@
 "use client"
-import UserUpdate from '@/components/UserUpdate'
+import UserUpdate from '@/components/users/UserUpdate'
 import React from 'react'
 
 function page() {

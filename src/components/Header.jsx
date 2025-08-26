@@ -1,22 +1,41 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { HiMenu, HiX, HiUser, HiUsers, HiCreditCard, HiHome } from "react-icons/hi";
+import {
+  HiMenu,
+  HiX,
+  HiUser,
+  HiUsers,
+  HiCreditCard,
+  HiHome,
+} from "react-icons/hi";
 
 const Header = ({ user, onLogin, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const buttonClass =
-    "flex items-center space-x-2 bg-white text-gray-700 px-3 py-1 rounded shadow hover:shadow-lg transition";
+    "flex items-center space-x-2 bg-white text-gray-600 px-3 py-1 rounded-md shadow hover:shadow-lg transition";
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    // <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-gradient-to-r from-blue-200 to-blue-300 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16 justify-between">
           {/* Left: Logo */}
-          <div className="flex-1 flex justify-start">
-            <Link href="/" className="text-xl font-bold text-gray-600 uppercase cursor-pointer">
-              Distribution Plan
+          <div className="flex-1 flex justify-start items-center">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 cursor-pointer"
+            >
+              <Image
+                src="/DistributionPlan.png"
+                width={40}
+                height={40}
+                alt="Distribution Plan Logo"
+                className="rounded-full"
+              />
+              
             </Link>
           </div>
 
@@ -26,22 +45,27 @@ const Header = ({ user, onLogin, onLogout }) => {
               <HiHome size={20} />
               <span>Home</span>
             </Link>
-            <Link href="/users" className={buttonClass}>
+            <Link href="/user" className={buttonClass}>
               <HiUser size={20} />
               <span>User</span>
             </Link>
-            <Link href="/distributors" className={buttonClass}>
+            <Link href="/distributor" className={buttonClass}>
               <HiUsers size={20} />
               <span>Distributor</span>
             </Link>
-            <Link href="/payments" className={buttonClass}>
-              <HiCreditCard size={20} />
-              <span>Payment</span>
-            </Link>
-            <Link href="/grouppayments" className={buttonClass}>
+               <Link href="/group" className={buttonClass}>
               <HiCreditCard size={20} />
               <span>Group</span>
             </Link>
+            <Link href="/payment" className={buttonClass}>
+              <HiCreditCard size={20} />
+              <span>Payment</span>
+            </Link>
+            <Link href="/report" className={buttonClass}>
+              <HiCreditCard size={20} />
+              <span>Report</span>
+            </Link>
+         
           </nav>
 
           {/* Right: Login / Logout (desktop only) */}
@@ -140,7 +164,7 @@ const Header = ({ user, onLogin, onLogout }) => {
             </li>
             <li>
               {/* Wrap Link inside a clickable block to close menu */}
-              <Link href="/users" passHref>
+              <Link href="/user" passHref>
                 <div
                   onClick={() => setMenuOpen(false)}
                   className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
@@ -150,7 +174,7 @@ const Header = ({ user, onLogin, onLogout }) => {
               </Link>
             </li>
             <li>
-              <Link href="/distributors" passHref>
+              <Link href="/distributor" passHref>
                 <div
                   onClick={() => setMenuOpen(false)}
                   className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
@@ -160,12 +184,32 @@ const Header = ({ user, onLogin, onLogout }) => {
               </Link>
             </li>
             <li>
-              <Link href="/payments" passHref>
+              <Link href="/group" passHref>
+                <div
+                  onClick={() => setMenuOpen(false)}
+                  className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
+                >
+                  Group
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link href="/payment" passHref>
                 <div
                   onClick={() => setMenuOpen(false)}
                   className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
                 >
                   Payment
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link href="/report" passHref>
+                <div
+                  onClick={() => setMenuOpen(false)}
+                  className="cursor-pointer block px-3 py-2 rounded hover:bg-gray-100 transition"
+                >
+                  Report
                 </div>
               </Link>
             </li>

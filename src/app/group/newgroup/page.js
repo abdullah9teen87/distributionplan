@@ -1,5 +1,5 @@
 "use client";
-import NewGroupForm from "@/components/NewGroupForm";
+import NewGroupForm from "@/components/groups/NewGroupForm";
 import React from "react";
 
 function page() {

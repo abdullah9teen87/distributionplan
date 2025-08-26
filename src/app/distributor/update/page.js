@@ -1,11 +1,11 @@
 "use client"
-import DistributorTable from '@/components/AllDistributors'
+import DistributorUpdate from '@/components/distributors/DistributorUpdate'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <DistributorTable />
+      <DistributorUpdate />
     </div>
   )
 }
