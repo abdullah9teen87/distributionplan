@@ -132,7 +132,7 @@ const UpdateGroupForm = ({ groupData, onUpdateSuccess, onCancel }) => {
           value={form.distributor?.name || ""}
           onChange={handleChange}
           disabled
-          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
 
@@ -144,7 +144,7 @@ const UpdateGroupForm = ({ groupData, onUpdateSuccess, onCancel }) => {
           name="areas"
           value={form.areas || ""}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
 
@@ -171,7 +171,7 @@ const UpdateGroupForm = ({ groupData, onUpdateSuccess, onCancel }) => {
           value={form.remarks || ""}
           onChange={handleChange}
           rows={3}
-          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
 
@@ -217,7 +217,7 @@ const UpdateGroupForm = ({ groupData, onUpdateSuccess, onCancel }) => {
               const formatted = formatSearchInput(e.target.value);
               setSearchQuery(formatted);
             }}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition"
           />
           <button
             type="button"
@@ -334,7 +334,7 @@ const UpdateGroupForm = ({ groupData, onUpdateSuccess, onCancel }) => {
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow transition disabled:bg-blue-400"
+          className="px-4 py-2 rounded-lg bg-blue-400 hover:bg-blue-500 text-white shadow transition disabled:bg-blue-200"
         >
           {loading ? "Updating..." : "Update"}
         </button>

@@ -10,28 +10,6 @@ import {
   methodNotAllowedResponse,
 } from "@/lib/apiResponse";
 
-// GET all users
-// export async function GET(req) {
-//   try {
-//     await dbConnect();
-//     const url = new URL(req.url);
-//     const page = parseInt(url.searchParams.get("page") || "1", 10);
-//     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
-//     const skip = (page - 1) * limit;
-
-//     const [total, data] = await Promise.all([
-//       User.countDocuments(),
-//       User.find().skip(skip).limit(limit).lean(),
-//     ]);
-
-//     const totalPages = Math.ceil(total / limit);
-//     return successResponse(Response, { data, totalPages }, "Fetched users");
-//   } catch (err) {
-//     return errorResponse(Response, err);
-//   }
-// }
-
-
 export async function GET(req) {
   try {
     await dbConnect();
@@ -66,16 +44,11 @@ export async function GET(req) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return successResponse(
-      { data, totalPages },
-      "Fetched users"
-    );
+    return successResponse({ data, totalPages }, "Fetched users");
   } catch (err) {
     return errorResponse(err);
   }
 }
-
-
 
 // POST a new user
 export async function POST(req) {
@@ -84,10 +57,23 @@ export async function POST(req) {
     const body = await req.json();
     const { cnicNumber } = body;
 
+   
+
     // Check for duplicate CNIC
     const existingUser = await User.findOne({ cnicNumber });
     if (existingUser) {
-      return conflictResponse(Response, "A user with this CNIC number already exists.");
+      return conflictResponse(
+        Response,
+        "A user with this CNIC number already exists."
+      );
+    }
+
+    // Check for duplicate Registration Number
+    const existingReg = await User.findOne({ registrationNumber });
+    if (existingReg) {
+      return conflictResponse(
+        "A user with this Registration Number already exists."
+      );
     }
 
     const user = await User.create(body);

@@ -28,7 +28,7 @@ body {
 
 /* styles/globals.css */
 .input-field {
-  @apply border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white;
+  @apply border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white;
 }
 
 

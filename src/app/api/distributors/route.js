@@ -56,6 +56,8 @@ export async function POST(req) {
     const body = await req.json();
     const { cnicNumber } = body;
 
+ 
+
     // Check for duplicate CNIC
     const existingDistributor = await Distributor.findOne({ cnicNumber });
     if (existingDistributor) {

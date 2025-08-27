@@ -3,58 +3,71 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/data/baseurl";
 import toast from "react-hot-toast";
-import { AREAS } from "@/data/cities";
-import AreaMultiSelect from "./AreaMultiSelect";
+import { AiOutlineClose } from "react-icons/ai";
+import { HiUserAdd } from "react-icons/hi";
+import { useRouter } from "next/navigation";
 
 const initialState = {
-  distributor: "",
+  distributorGroup: "",
   month: "",
-  areas: [],
-  users: [], 
-  totalAmount: "",
-  returnedAmount: 0,
-  status: "handover",
+  users: [],
+  totalAmount: 0,
   remarks: "",
 };
 
 const NewPaymentForm = ({ onSubmit }) => {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
-  const [distributors, setDistributors] = useState([]);
-  const [userPayments, setUserPayments] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const router = useRouter();
 
-  // fetch distributors & userPayments
+  // fetch all groups
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchGroups = async () => {
       try {
-        const dRes = await axios.get(`${BASE_URL}/api/distributors`);
-        // const uRes = await axios.get(`${BASE_URL}/api/user-payments`);
-
-        setDistributors(dRes?.data?.data?.data || []);
-        // setUserPayments(uRes?.data?.data || []);
+        const res = await axios.get(`${BASE_URL}/api/distributor-groups`);
+        setGroups(res?.data?.data?.data || []);
       } catch (err) {
         console.error(err);
-        toast.error("Failed to fetch distributors or user payments");
+        toast.error("Failed to load groups");
       }
     };
-    fetchData();
+    fetchGroups();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  // when group changes, populate users & their last month payment if exists
+  useEffect(() => {
+    if (!form.distributorGroup) return;
+    const group = groups.find((g) => g._id === form.distributorGroup);
+    if (!group) return;
 
-  const addUser = () => {
+    const usersWithAmount = group.users.map((u) => ({
+      user: u.user._id,
+      name: u.user.name,
+      cnicNumber: u.user.cnicNumber,
+      contactNumber: u.user.contactNumber,
+      amount: u.amount || 0, // default from group
+      status: "pending", // default for new payment
+      carryForward: false,
+      failedremarks: "",
+    }));
+
     setForm((prev) => ({
       ...prev,
-      users: [...prev.users, ""], // sirf ID store karni hai
+      users: usersWithAmount,
+      totalAmount: usersWithAmount.reduce((sum, u) => sum + u.amount, 0),
     }));
-  };
+  }, [form.distributorGroup, groups]);
 
-  const updateUser = (index, value) => {
+  // update total amount whenever users' amount changes
+  useEffect(() => {
+    const total = form.users.reduce((sum, u) => sum + (parseFloat(u.amount) || 0), 0);
+    setForm((prev) => ({ ...prev, totalAmount: total }));
+  }, [form.users]);
+
+  const handleUserAmountChange = (index, value) => {
     const updated = [...form.users];
-    updated[index] = value;
+    updated[index].amount = parseFloat(value) || 0;
     setForm((prev) => ({ ...prev, users: updated }));
   };
 
@@ -71,25 +84,28 @@ const NewPaymentForm = ({ onSubmit }) => {
 
     try {
       const payload = {
-        ...form,
-        totalAmount: Number(form.totalAmount),
-        returnedAmount: Number(form.returnedAmount || 0),
+        distributorGroup: form.distributorGroup,
+        month: form.month,
+        remarks: form.remarks,
+        users: form.users.map((u) => ({
+          user: u.user,
+          amount: u.amount,
+          status: u.status,
+          carryForward: u.carryForward,
+          failedremarks: u.failedremarks,
+        })),
       };
 
-      const res = await axios.post(
-        `${BASE_URL}/api/distributor-payments`,
-        payload
-      );
+      const res = await axios.post(`${BASE_URL}/api/distributor-payments`, payload);
 
       if (res.status === 201) {
         toast.success("Payment created successfully!", { id: toastId });
         setForm(initialState);
-        if (onSubmit) onSubmit(form);
+        if (onSubmit) onSubmit(payload);
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to create payment", {
-        id: toastId,
-      });
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to create payment", { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -106,156 +122,121 @@ const NewPaymentForm = ({ onSubmit }) => {
             New Distributor Payment
           </legend>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Distributor */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Distributor</label>
-              <select
-                name="distributor"
-                value={form.distributor}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              >
-                <option value="">Select Distributor</option>
-                {distributors.map((d) => (
-                  <option key={d._id} value={d._id}>
-                    {d.name} - {d.cnicNumber}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Distributor Group */}
+          <div className="flex flex-col">
+            <label className="font-medium mb-1">Distributor Group</label>
+            <select
+              name="distributorGroup"
+              value={form.distributorGroup}
+              onChange={(e) => setForm((prev) => ({ ...prev, distributorGroup: e.target.value }))}
+              disabled={loading}
+              className="input-field"
+            >
+              <option value="">Select Group</option>
+              {groups.map((g) => (
+                <option key={g._id} value={g._id}>
+                  {g.distributor.name} | {g.areas.join(", ")}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* Month */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Month</label>
-              <input
-                type="month"
-                name="month"
-                value={form.month}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              />
-            </div>
-
-            {/* 📌 Area Multi Select */}
-          <AreaMultiSelect form={form} setForm={setForm} disabled={loading} />
-
-            {/* Total Amount */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Total Amount</label>
-              <input
-                type="number"
-                name="totalAmount"
-                value={form.totalAmount}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              />
-            </div>
-
-            {/* Returned Amount */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Returned Amount</label>
-              <input
-                type="number"
-                name="returnedAmount"
-                value={form.returnedAmount}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              />
-            </div>
-
-            {/* Status */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Payment Status</label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              >
-                {["handover", "completed"].map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Remarks */}
-            <div className="flex flex-col sm:col-span-2">
-              <label className="font-medium mb-1">Remarks</label>
-              <textarea
-                name="remarks"
-                rows={3}
-                value={form.remarks}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field resize-none"
-                placeholder="Enter remarks..."
-              />
-            </div>
+          {/* Month */}
+          <div className="flex flex-col">
+            <label className="font-medium mb-1">Month</label>
+            <input
+              type="month"
+              name="month"
+              value={form.month}
+              onChange={(e) => setForm((prev) => ({ ...prev, month: e.target.value }))}
+              disabled={loading}
+              className="input-field"
+            />
           </div>
 
           {/* Users */}
           <div>
-            <h3 className="font-semibold text-lg mb-2">Users (UserPayments)</h3>
+            <h3 className="font-semibold text-lg mb-2">Users</h3>
+            {form.users.length === 0 && <p className="text-gray-500 italic">No users in this group.</p>}
             {form.users.map((u, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 mb-3 border p-3 rounded-lg"
-              >
-                <select
-                  value={u}
-                  onChange={(e) => updateUser(index, e.target.value)}
-                  disabled={loading}
-                  className="input-field flex-1"
-                >
-                  <option value="">Select UserPayment</option>
-                  {userPayments.map((up) => (
-                    <option key={up._id} value={up._id}>
-                      {up.user?.name} - {up.amount} Rs
-                    </option>
-                  ))}
-                </select>
+              <div key={u.user} className="relative border p-3 rounded-lg bg-gray-50 grid grid-cols-2 sm:grid-cols-4 gap-2 items-center mb-2">
+                <div>
+                  <strong>Name:</strong> {u.name}
+                </div>
+                <div>
+                  <strong>CNIC:</strong> {u.cnicNumber}
+                </div>
+                <div>
+                  <strong>Mobile:</strong> {u.contactNumber}
+                </div>
+                <div className="w-full sm:w-32 text-center sm:text-right">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={u.amount}
+                    onChange={(e) => handleUserAmountChange(index, e.target.value)}
+                    placeholder="Amount"
+                    className="input-field text-center sm:text-right no-arrows w-full sm:w-32"
+                  />
+                </div>
 
+                {/* Remove */}
                 <button
                   type="button"
                   onClick={() => removeUser(index)}
-                  className="text-red-600 hover:underline text-sm"
+                  className="absolute top-2 right-2 text-gray-400 hover:text-red-600"
                   disabled={loading}
                 >
-                  Remove
+                  <AiOutlineClose size={18} />
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Total Amount */}
+          <div className="flex flex-col">
+            <label className="font-medium mb-1">Total Amount</label>
+            <input
+              type="number"
+              value={form.totalAmount}
+              readOnly
+              className="input-field bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+
+          {/* Remarks */}
+          <div className="flex flex-col">
+            <label className="font-medium mb-1">Remarks</label>
+            <textarea
+              name="remarks"
+              rows={3}
+              value={form.remarks}
+              onChange={(e) => setForm((prev) => ({ ...prev, remarks: e.target.value }))}
+              disabled={loading}
+              className="input-field resize-none"
+              placeholder="Enter remarks..."
+            />
+          </div>
+
+          <div className="grid grid-cols-2 items-center justify-between gap-3 sm:gap-4 mt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
+                loading ? "bg-blue-200 cursor-not-allowed" : "bg-blue-400 hover:bg-blue-500"
+              }`}
+            >
+              {loading ? "Submitting..." : "Create Payment"}
+            </button>
 
             <button
               type="button"
-              onClick={addUser}
-              className="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-sm"
-              disabled={loading}
+              className="w-full py-2 sm:py-3 text-blue-500 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
+              onClick={() => router.back()}
             >
-              + Add UserPayment
+              Close
             </button>
           </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
-              loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Submitting..." : "Create Payment"}
-          </button>
         </fieldset>
       </form>
     </div>

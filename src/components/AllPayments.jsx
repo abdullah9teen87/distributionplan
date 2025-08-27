@@ -77,7 +77,7 @@
 //           {/* Add Payment Button */}
 //           <Link
 //             href="/payments/newpayment"
-//             className="hidden sm:flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm"
+//             className="hidden sm:flex items-center space-x-2 bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded shadow transition text-sm"
 //           >
 //             <HiPlusCircle size={20} />
 //             <span>New Payment</span>
@@ -106,7 +106,7 @@
 //           onClick={() => setViewMode("table")}
 //           className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
 //             viewMode === "table"
-//               ? "bg-blue-600 text-white border-blue-600"
+//               ? "bg-blue-400 text-white border-blue-500"
 //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
 //           }`}
 //         >
@@ -118,7 +118,7 @@
 //           onClick={() => setViewMode("card")}
 //           className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
 //             viewMode === "card"
-//               ? "bg-blue-600 text-white border-blue-600"
+//               ? "bg-blue-400 text-white border-blue-500"
 //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
 //           }`}
 //         >
@@ -128,7 +128,7 @@
 //       </div>
 
 //       {/* Table or Card View */}
-//       <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 p-2">
+//       <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300 p-1">
 //         {viewMode === "table" ? (
 //           <SortableTable columns={columns} data={payments} />
 //         ) : (
@@ -145,7 +145,7 @@
 //             className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
 //               page === 1
 //                 ? "bg-gray-300 cursor-not-allowed text-gray-600"
-//                 : "bg-blue-600 hover:bg-blue-700 text-white"
+//                 : "bg-blue-400 hover:bg-blue-500 text-white"
 //             }`}
 //           >
 //             Previous
@@ -162,7 +162,7 @@
 //             className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
 //               page === totalPages || totalPages < 1
 //                 ? "bg-gray-300 cursor-not-allowed text-gray-600"
-//                 : "bg-blue-600 hover:bg-blue-700 text-white"
+//                 : "bg-blue-400 hover:bg-blue-500 text-white"
 //             }`}
 //           >
 //             Next
@@ -178,7 +178,7 @@
 //             id="pageSize"
 //             value={pageSize}
 //             onChange={handlePageSizeChange}
-//             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+//             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
 //           >
 //             {PAGE_SIZE_OPTIONS.map((size) => (
 //               <option key={size} value={size}>
@@ -275,7 +275,7 @@ const AllPayment = () => {
         <div className="flex items-center gap-3">
           <Link
             href="/payments/newpayment"
-            className="hidden sm:flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm"
+            className="hidden sm:flex items-center space-x-2 bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded shadow transition text-sm"
           >
             <HiPlusCircle size={20} />
             <span>New Payment</span>
@@ -303,7 +303,7 @@ const AllPayment = () => {
           onClick={() => setViewMode("table")}
           className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
             viewMode === "table"
-              ? "bg-blue-600 text-white border-blue-600"
+              ? "bg-blue-400 text-white border-blue-500"
               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
           }`}
         >
@@ -314,7 +314,7 @@ const AllPayment = () => {
           onClick={() => setViewMode("card")}
           className={`px-4 py-1.5 rounded text-sm font-medium border transition flex items-center gap-2 ${
             viewMode === "card"
-              ? "bg-blue-600 text-white border-blue-600"
+              ? "bg-blue-400 text-white border-blue-500"
               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
           }`}
         >
@@ -324,7 +324,7 @@ const AllPayment = () => {
       </div>
 
       {/* Table or Card View */}
-      <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 p-2">
+      <div className="overflow-x-auto shadow-lg rounded-lg border-2 border-gray-300 p-1">
         {loading ? (
           viewMode === "table" ? (
             <TableSkeleton columns={columns} rows={8} />
@@ -347,7 +347,7 @@ const AllPayment = () => {
             className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
               page === 1
                 ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+                : "bg-blue-400 hover:bg-blue-500 text-white"
             }`}
           >
             Previous
@@ -364,7 +364,7 @@ const AllPayment = () => {
             className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
               page === totalPages || totalPages < 1
                 ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                : "bg-blue-600 hover:bg-blue-700 text-white"
+                : "bg-blue-400 hover:bg-blue-500 text-white"
             }`}
           >
             Next
@@ -380,7 +380,7 @@ const AllPayment = () => {
             id="pageSize"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>

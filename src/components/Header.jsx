@@ -15,7 +15,7 @@ const Header = ({ user, onLogin, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const buttonClass =
-    "flex items-center space-x-2 bg-white text-gray-600 px-3 py-1 rounded-md shadow hover:shadow-lg transition";
+    "flex items-center space-x-2 bg-white text-gray-600 px-3 py-1 rounded-md shadow hover:shadow-lg hover:bg-gray-600 hover:text-gray-50 transition";
 
   return (
     // <header className="bg-white shadow-md sticky top-0 z-50">
@@ -86,7 +86,7 @@ const Header = ({ user, onLogin, onLogout }) => {
               <button
                 onClick={onLogin}
                 aria-label="Login"
-                className="text-gray-700 hover:text-blue-600 transition"
+                className="text-gray-700 hover:text-blue-500 transition"
                 style={{
                   width: 40,
                   height: 40,
@@ -107,7 +107,7 @@ const Header = ({ user, onLogin, onLogout }) => {
               <button
                 onClick={onLogout} // Or open profile menu here if you want
                 aria-label="User Profile / Logout"
-                className="text-gray-700 hover:text-blue-600 transition"
+                className="text-gray-700 hover:text-blue-500 transition"
                 style={{
                   width: 40,
                   height: 40,
@@ -122,7 +122,7 @@ const Header = ({ user, onLogin, onLogout }) => {
               <button
                 onClick={onLogin}
                 aria-label="Login"
-                className="text-gray-700 hover:text-blue-600 transition"
+                className="text-gray-700 hover:text-blue-500 transition"
                 style={{
                   width: 40,
                   height: 40,
@@ -138,7 +138,7 @@ const Header = ({ user, onLogin, onLogout }) => {
             {/* Mobile menu toggle button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none"
+              className="text-gray-700 hover:text-blue-500 focus:outline-none"
               aria-label="Toggle menu"
             >
               {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}

@@ -5,8 +5,9 @@ import { BASE_URL } from "@/data/baseurl";
 import toast from "react-hot-toast";
 import AreaMultiSelect from "../AreaMultiSelect"; // tumne already banaya hai
 import { AiOutlineClose } from "react-icons/ai";
-import { HiUserAdd } from "react-icons/hi";
+import { HiOutlineUserAdd, HiUserAdd, HiUserCircle } from "react-icons/hi";
 import { useRouter } from "next/navigation";
+import DistributorSelectInput from "../DistributorSelectInput";
 
 const initialState = {
   distributor: "",
@@ -70,7 +71,6 @@ const NewGroupForm = ({ onSubmit }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    
   };
 
   // user search
@@ -170,23 +170,14 @@ const NewGroupForm = ({ onSubmit }) => {
           </legend>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Distributor */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1">Distributor</label>
-              <select
-                name="distributor"
-                value={form.distributor}
-                onChange={handleChange}
-                disabled={loading}
-                className="input-field"
-              >
-                <option value="">Select Distributor</option>
-                {distributors.map((d) => (
-                  <option key={d._id} value={d._id}>
-                    {d.name} - {d.cnicNumber}
-                  </option>
-                ))}
-              </select>
-            </div>
+
+            <DistributorSelectInput
+              form={form}
+              setForm={setForm}
+              distributors={distributors}
+              disabled={loading}
+              label={"Distributor"}
+            />
 
             {/* Areas */}
             <AreaMultiSelect form={form} setForm={setForm} disabled={loading} />
@@ -205,15 +196,16 @@ const NewGroupForm = ({ onSubmit }) => {
                   const formatted = formatSearchInput(e.target.value);
                   setSearchQuery(formatted);
                 }}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition"
               />
               <button
                 type="button"
                 onClick={handleUserSearch}
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm"
+                className="px-4 py-2 flex gap-2 justify-center items-center min-w-48 bg-gray-700 text-white rounded-lg text-sm"
                 disabled={loading}
               >
-                Search
+                <HiUserAdd size={18} />
+                Search User
               </button>
             </div>
 
@@ -330,8 +322,8 @@ const NewGroupForm = ({ onSubmit }) => {
               disabled={loading}
               className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
                 loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-blue-200 cursor-not-allowed"
+                  : "bg-blue-400 hover:bg-blue-500"
               }`}
             >
               {loading ? "Submitting..." : "Create Group"}
@@ -339,10 +331,10 @@ const NewGroupForm = ({ onSubmit }) => {
 
             <button
               type="button"
-              className="w-full py-2 sm:py-3 text-blue-600 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
+              className="w-full py-2 sm:py-3 text-blue-500 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
               onClick={() => router.back()}
             >
-              Cancel
+              Close
             </button>
           </div>
         </fieldset>

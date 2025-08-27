@@ -69,7 +69,7 @@ const DistributorUpdate = () => {
     <div className="w-full min-h-screen bg-gradient-to-br from-[#f8fafc] via-[#fefefe] to-[#e2e8f0] px-2 sm:px-4 py-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6 flex items-center justify-center gap-2">
-          <FiSearch className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+          <FiSearch className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
           Search & Update Distributor
         </h2>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 relative">
@@ -83,7 +83,7 @@ const DistributorUpdate = () => {
                 const formatted = formatSearchInput(e.target.value);
                 setSearchQuery(formatted);
               }}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition"
             />
             {searchQuery && (
               <button
@@ -100,7 +100,7 @@ const DistributorUpdate = () => {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-white font-medium text-sm sm:text-base rounded-lg shadow transition bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-white font-medium text-sm sm:text-base rounded-lg shadow transition bg-blue-400 hover:bg-blue-500 disabled:bg-blue-200 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

@@ -43,7 +43,7 @@ const UserCardList = ({ users = [] }) => {
 
           {/* Name and Reg No */}
           <div className="mb-4">
-            <h3 className="text-lg font-bold text-blue-700 capitalize flex flex-wrap gap-2 items-center">
+            <h3 className="text-lg font-bold text-blue-400 capitalize flex flex-wrap gap-2 items-center">
               {u.name}
               {u.registrationNumber && (
                 <span className="text-sm text-gray-500 font-medium italic">

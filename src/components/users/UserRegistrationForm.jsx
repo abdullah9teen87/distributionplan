@@ -130,7 +130,7 @@ const UserRegistrationForm = ({ onSubmit }) => {
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 text-xs sm:text-sm lg:text-base">
             {[
-              { label: "Registration Number", name: "registrationNumber" },
+              { label: "Registration Number", name: "registrationNumber", type: "number" },
               {
                 label: "Registration Date",
                 name: "registrationDate",
@@ -285,7 +285,7 @@ const UserRegistrationForm = ({ onSubmit }) => {
                 name="isVerified"
                 checked={form.isVerified}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600"
+                className="h-4 w-4 text-blue-500"
                 disabled={loading}
               />
               <label htmlFor="isVerified" className="text-gray-700 font-medium">
@@ -301,18 +301,18 @@ const UserRegistrationForm = ({ onSubmit }) => {
               disabled={loading}
               className={`w-full py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
                 loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-blue-200 cursor-not-allowed"
+                  : "bg-blue-400 hover:shadow-md hover:bg-blue-500"
               }`}
             >
               {loading ? "Submitting..." : "Register User"}
             </button>
             <button
               type="button" 
-              className="w-full py-2 sm:py-3 text-blue-600 border font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
+              className="w-full py-2 sm:py-3 text-blue-500 border hover:bg-gray-100 font-semibold rounded-lg shadow-md border-gray-400 transition text-sm sm:text-base"
               onClick={() => router.back()}
             >
-              Cancel
+              Close
             </button>
           </div>
         </fieldset>

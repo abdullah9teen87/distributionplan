@@ -14,7 +14,7 @@ import { BASE_URL } from "@/data/baseurl";
 import TableSkeleton from "../TableSkeleton";
 import CardSkeleton from "../CardSkeleton";
 
-const AllGroups = () => {
+const AllPayments = () => {
   const [groups, setGroups] = useState([]);
   const [viewMode, setViewMode] = useState("table");
   const [loading, setLoading] = useState(true);
@@ -26,43 +26,44 @@ const AllGroups = () => {
 
   // fetch groups
   useEffect(() => {
-    const fetchGroups = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `${BASE_URL}/api/distributor-groups?page=${page}&limit=${pageSize}`
-        );
-        // console.error("Response", res?.data?.data);
-        setGroups(res?.data?.data?.data || []);
+   const fetchPayments = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/api/distributor-payments?page=${page}&limit=${pageSize}&month=${currentMonth}`
+    );
+    setGroups(res?.data?.data?.data || []);
+    setTotalPages(res?.data?.data?.totalPages || 1);
+  } catch (err) {
+    console.error("Error fetching payments", err);
+    setGroups([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
-        setTotalPages(res?.data?.data?.totalPages || 1);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setGroups([]);
-        } else {
-          console.error("Error fetching groups", err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchGroups();
+    fetchPayments();
+    
   }, [page, pageSize]);
 
   useEffect(() => {
     if (page > totalPages) setPage(1);
   }, [totalPages, page]);
 
-  const columns = [
-    { header: "Distributor ID", accessor: "distributor._id" },
-    { header: "Distributor", accessor: "distributor.name" },
-    { header: "Areas", accessor: "areas" },
-    { header: "Total Amount", accessor: "totalAmount" },
-    { header: "Users Count", accessor: "users.length" },
-    { header: "Remarks", accessor: "remarks" },
-    { header: "Created At", accessor: "createdAt" },
-  ];
+const columns = [
+  { header: "S.No", accessor: "sno" }, // optional: generate index in SortedTable
+  { header: "Distributor", accessor: "distributor.name" },
+  { header: "Areas", accessor: "areas" },
+  { header: "Total Amount", accessor: "totalAmount" },
+  { header: "Paid Amount", accessor: "paidAmount" },
+  { header: "Pending Amount", accessor: "pendingAmount" },
+  { header: "Users Count", accessor: "users.length" },
+  { header: "Carry Forward Users", accessor: "usersCarryCount" }, // computed
+  { header: "Remarks", accessor: "remarks" },
+  { header: "Created At", accessor: "createdAt" },
+];
+
 
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
@@ -185,6 +186,7 @@ const AllGroups = () => {
       </nav>
     </div>
   );
+  5
 };
 
-export default AllGroups;
+export default AllPayments;

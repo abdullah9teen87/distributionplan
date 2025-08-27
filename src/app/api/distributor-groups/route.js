@@ -6,6 +6,8 @@ import {
   successResponse,
   errorResponse,
   notFoundResponse,
+  createdResponse,
+  conflictResponse,
 } from "@/lib/apiResponse";
 
 export async function GET(req) {
@@ -116,12 +118,18 @@ export async function POST(req) {
       return errorResponse("All required fields must be provided");
     }
 
+        // Check for duplicate CNIC
+        const existingGroup = await DistributorGroup.findOne({ distributor });
+        if (existingGroup) {
+          return conflictResponse("A Distributor-group with this Distributor already exists.");
+        }
+
     // optional: validate unique users or eligibility here if needed
-    console.log(distributor);
-    console.log(areas);
-    console.log(users);
-    console.log(totalAmount);
-    console.log(remarks);
+    // console.log(distributor);
+    // console.log(areas);
+    // console.log(users);
+    // console.log(totalAmount);
+    // console.log(remarks);
     // const group = await DistributorGroup.create({
     //   distributor,
     //   areas,

@@ -270,7 +270,7 @@ const UpdateUserForm = ({ userData, onUpdateSuccess, onCancel }) => {
                 name="isVerified"
                 checked={form.isVerified}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600"
+                className="h-4 w-4 text-blue-500"
               />
               <label htmlFor="isVerified" className="text-gray-700 font-medium">
                 Is Verified
@@ -284,8 +284,8 @@ const UpdateUserForm = ({ userData, onUpdateSuccess, onCancel }) => {
               disabled={loading}
               className={`w-1/2 py-2 sm:py-3 text-white font-semibold rounded-lg shadow transition text-sm sm:text-base ${
                 loading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-blue-200 cursor-not-allowed"
+                  : "bg-blue-400 hover:bg-blue-500"
               }`}
             >
               {loading ? "Updating..." : "Update User"}
