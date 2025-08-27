@@ -60,7 +60,7 @@ const columns = [
   { header: "Paid Amount", accessor: "paidAmount" },
   { header: "Pending Amount", accessor: "pendingAmount" },
   { header: "Users Count", accessor: "users.length" },
-  { header: "Carry Forward Users", accessor: "usersCarryCount" }, // computed
+  { header: "Carry Forward Amount", accessor: "usersCarryCount" }, 
   { header: "Remarks", accessor: "remarks" },
   { header: "Created At", accessor: "createdAt" },
 ];
