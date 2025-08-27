@@ -1,10 +1,10 @@
-import NewPaymentForm from '@/components/NewPaymentForm'
+import DistributorPaymentForm from '@/components/payments/DistributorPaymentForm'
 import React from 'react'
 
 function page() {
   return (
     <div>
-        <NewPaymentForm />
+        <DistributorPaymentForm />
     </div>
   )
 }

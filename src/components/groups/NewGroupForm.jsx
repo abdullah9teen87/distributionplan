@@ -162,7 +162,7 @@ const NewGroupForm = ({ onSubmit }) => {
     <div className="w-full bg-gradient-to-br from-[#f8fafc] via-[#fefefe] to-[#e2e8f0] px-2 sm:px-4 py-4">
       <form
         onSubmit={handleSubmit}
-        className="max-w-5xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200"
+        className="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200"
       >
         <fieldset className="space-y-6 sm:space-y-8">
           <legend className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4">

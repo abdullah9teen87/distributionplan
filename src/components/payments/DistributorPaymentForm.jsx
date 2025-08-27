@@ -17,7 +17,7 @@ const initialState = {
   remarks: "",
 };
 
-const NewPaymentForm = ({ onSubmit }) => {
+const DistributorPaymentForm = ({ onSubmit }) => {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
@@ -125,7 +125,7 @@ const NewPaymentForm = ({ onSubmit }) => {
     <div className="w-full lg:p-4 p-2">
       <form
         onSubmit={handleSubmit}
-        className=" mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200"
+        className="max-w-7xl mx-auto bg-white p-4 sm:p-6 rounded-xl shadow-md border border-gray-200"
       >
         <fieldset className="space-y-6 sm:space-y-8">
           <legend className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4">
@@ -254,4 +254,4 @@ const NewPaymentForm = ({ onSubmit }) => {
   );
 };
 
-export default NewPaymentForm;
+export default DistributorPaymentForm;

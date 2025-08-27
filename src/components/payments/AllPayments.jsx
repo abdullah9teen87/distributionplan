@@ -20,6 +20,7 @@ const AllPayments = () => {
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
+  const [currentMonth, setCurrentMonth] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const PAGE_SIZE_OPTIONS = [5, 10, 25, 50];
@@ -29,9 +30,10 @@ const AllPayments = () => {
    const fetchPayments = async () => {
   setLoading(true);
   try {
-    const res = await axios.get(
-      `${BASE_URL}/api/distributor-payments?page=${page}&limit=${pageSize}&month=${currentMonth}`
-    );
+    const res = await 
+      axios.get(`${BASE_URL}/api/distributor-payments?page=${page}&limit=${pageSize}&month=${currentMonth}`);
+
+
     setGroups(res?.data?.data?.data || []);
     setTotalPages(res?.data?.data?.totalPages || 1);
   } catch (err) {
@@ -77,24 +79,24 @@ const columns = [
 
         <div className="flex items-center gap-3">
           <Link
-            href="/group/newgroup"
+            href="/payment/newpayment"
             className="hidden sm:flex items-center space-x-2 bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded shadow transition text-sm"
           >
             <HiPlusCircle size={20} />
             <span>New Group</span>
           </Link>
-          <Link href="/group/newgroup" className="sm:hidden text-gray-600">
+          <Link href="/payment/newpayment" className="sm:hidden text-gray-600">
             <HiPlusCircle size={24} />
           </Link>
 
           <Link
-            href="/group/update"
+            href="/payment/search"
             className="hidden sm:flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow transition text-sm"
           >
             <HiSearch size={20} />
             <span>Search Group</span>
           </Link>
-          <Link href="/group/update" className="sm:hidden text-gray-800">
+          <Link href="/payment/search" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>

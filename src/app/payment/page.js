@@ -1,12 +1,13 @@
 "use client"
 
-import DistributorPaymentForm from '@/components/payments/DistributorPaymentForm'
+import AllPayments from '@/components/payments/AllPayments'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <DistributorPaymentForm />
+
+      <AllPayments />
     </div>
   )
 }
