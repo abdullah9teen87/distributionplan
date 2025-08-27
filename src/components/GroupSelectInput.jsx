@@ -35,7 +35,7 @@ function GroupSelectInput({ form, setForm, groups, disabled, label }) {
         }`}
         onClick={() => !disabled && setOpen(!open)}
       >
-        <span className="truncate">
+        <span className="truncate capitalize">
           {selectedGroup
             ? `${selectedGroup.distributor.name} | ${selectedGroup.areas.join(", ")}`
             : `Select ${label}`}
