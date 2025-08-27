@@ -54,9 +54,8 @@ const AllPayments = () => {
   }, [totalPages, page]);
 
 const columns = [
-  { header: "S.No", accessor: "sno" }, // optional: generate index in SortedTable
-  { header: "Distributor", accessor: "distributor.name" },
-  { header: "Areas", accessor: "areas" },
+  { header: "Distributor", accessor: "distributorGroup.distributor.name" },
+  // { header: "Areas", accessor: "areas" },
   { header: "Total Amount", accessor: "totalAmount" },
   { header: "Paid Amount", accessor: "paidAmount" },
   { header: "Pending Amount", accessor: "pendingAmount" },
