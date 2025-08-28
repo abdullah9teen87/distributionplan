@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   HiHome,
@@ -21,24 +21,37 @@ const Header = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  const userRef = useRef(null);
+  const menuRef = useRef(null);
+
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userRef.current && !userRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userString = localStorage.getItem("user");
-
       let userData = null;
-
       try {
         userData = userString ? JSON.parse(userString) : null;
       } catch (err) {
         console.warn("Error parsing user from localStorage:", err);
-        userData = null; // fallback
       }
-
       setUser(userData);
     }
   }, []);
 
-  // Logout function
   const handleLogout = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("user");
@@ -49,43 +62,18 @@ const Header = () => {
 
   const navItems = [
     { label: "Home", href: "/dashboard/admin/", icon: <HiHome size={20} /> },
-    {
-      label: "User",
-      href: "/dashboard/admin/user",
-      icon: <HiUser size={20} />,
-    },
-    {
-      label: "Distributor",
-      href: "/dashboard/admin/distributor",
-      icon: <HiUsers size={20} />,
-    },
-    {
-      label: "Group",
-      href: "/dashboard/admin/group",
-      icon: <HiClipboardList size={20} />,
-    },
-    {
-      label: "Payment",
-      href: "/dashboard/admin/payment",
-      icon: <HiCreditCard size={20} />,
-    },
-    {
-      label: "Report",
-      href: "/dashboard/admin/report",
-      icon: <HiDocumentReport size={20} />,
-    },
-    {
-      label: "Approvals",
-      href: "/dashboard/admin/approvals",
-      icon: <HiCheckCircle size={20} />,
-    },
+    { label: "User", href: "/dashboard/admin/user", icon: <HiUser size={20} /> },
+    { label: "Distributor", href: "/dashboard/admin/distributor", icon: <HiUsers size={20} /> },
+    { label: "Group", href: "/dashboard/admin/group", icon: <HiClipboardList size={20} /> },
+    { label: "Payment", href: "/dashboard/admin/payment", icon: <HiCreditCard size={20} /> },
+    { label: "Report", href: "/dashboard/admin/report", icon: <HiDocumentReport size={20} /> },
+    { label: "Approvals", href: "/dashboard/admin/approvals", icon: <HiCheckCircle size={20} /> },
   ];
 
   const getButtonClass = (href) => {
-    const currentPath = pathname.replace(/\/$/, ""); // remove trailing slash
+    const currentPath = pathname.replace(/\/$/, "");
     const hrefPath = href.replace(/\/$/, "");
 
-    // Exact match for home
     if (hrefPath === "/dashboard/admin") {
       return currentPath === hrefPath
         ? "flex items-center space-x-1 sm:px-3 px-2 py-1.5 rounded-md shadow transition bg-gray-600 text-white sm:text-md text-sm"
@@ -100,74 +88,56 @@ const Header = () => {
   };
 
   return (
-    <header
-      className={
-        "bg-gradient-to-r from-blue-200 to-blue-300 shadow-md top-0 z-50 sticky"
-      }
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-        <div className="  h-16 flex justify-between items-center">
-          {/* Left: Logo */}
-          <div className=" flex justify-start items-center">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 cursor-pointer"
-            >
-              <Image
-                src="/DistributionPlan.png"
-                width={40}
-                height={40}
-                alt="Distribution Plan Logo"
-                className="rounded-full"
-              />
+    <header className="bg-gradient-to-r from-blue-200 to-blue-300 shadow-md top-0 z-50 sticky">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-16 flex justify-between items-center">
+          {/* Logo */}
+          <div className="flex justify-start items-center">
+            <Link href="/" className="flex items-center space-x-2 cursor-pointer">
+              <Image src="/DistributionPlan.png" width={40} height={40} alt="Logo" className="rounded-full" />
             </Link>
           </div>
 
-          {/* Center: Navigation (desktop only) */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-4">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={getButtonClass(item.href)}
-              >
+              <Link key={item.href} href={item.href} className={getButtonClass(item.href)}>
                 {item.icon}
                 <span>{item.label}</span>
               </Link>
             ))}
           </nav>
 
-          {/* User Icon / Dropdown */}
+          {/* User & Mobile Menu */}
           <div className="flex items-center space-x-4">
-            <div className="relative flex items-center space-x-4">
-              {user && (
-                <div className="relative">
-                  <button
-                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="text-gray-700 hover:text-gray-600 transition w-10 h-10 flex items-center justify-center rounded-full  "
-                    aria-label="User menu"
-                  >
-                    <HiUser size={24} />
-                  </button>
-                  {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 text-xs bg-white shadow-lg rounded-md p-2 z-50">
-                      <p className="px-4 py-2 text-gray-700 font-medium  rounded-lg hover:bg-gray-100  transition duration-300 ease-in-out">
-                        {user.email}
-                      </p>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2  font-bold text-red-600 h rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* User Dropdown */}
+            {user && (
+              <div ref={userRef} className="relative">
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="text-gray-700 hover:text-gray-600 transition w-10 h-10 flex items-center justify-center rounded-full"
+                  aria-label="User menu"
+                >
+                  <HiUser size={24} />
+                </button>
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 text-xs bg-white shadow-lg rounded-md p-2 z-50">
+                    <p className="px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out">
+                      {user.email}
+                    </p>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 font-bold text-red-600 rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* Mobile Menu */}
-            <div className="md:hidden flex items-center space-x-2">
+            {/* Mobile Menu Button */}
+            <div ref={menuRef} className="md:hidden">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="text-gray-700 hover:text-gray-600 focus:outline-none"
@@ -180,7 +150,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <nav className="md:hidden bg-white shadow-md border-t border-gray-200">
           <ul className="flex flex-col px-4 py-3 space-y-2 text-gray-700 font-semibold">
