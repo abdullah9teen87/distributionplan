@@ -322,7 +322,7 @@ const AuthModal = () => {
                 >
                   Close
                 </button>
-                <button
+                {/* <button
                   onClick={handleResendOtp}
                   className="px-4 py-2 text-blue-500 border border-blue-400 rounded-lg hover:bg-blue-50 transition flex justify-center items-center"
                 >
@@ -331,7 +331,7 @@ const AuthModal = () => {
                   ) : (
                     "Resend OTP"
                   )}
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
