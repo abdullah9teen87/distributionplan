@@ -18,6 +18,7 @@ import {
 const Header = () => {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   useEffect(() => {
@@ -37,26 +38,48 @@ const Header = () => {
     }
   }, []);
 
-    // Logout function
+  // Logout function
   const handleLogout = () => {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("user"); 
-      setUser(null); 
-      router.push("/"); 
+      localStorage.removeItem("user");
+      setUser(null);
+      router.push("/");
     }
   };
 
-
-
-const navItems = [
-  { label: "Home", href: "/dashboard/admin/", icon: <HiHome size={20} /> },
-  { label: "User", href: "/dashboard/admin/user", icon: <HiUser size={20} /> },
-  { label: "Distributor", href: "/dashboard/admin/distributor", icon: <HiUsers size={20} /> },
-  { label: "Group", href: "/dashboard/admin/group", icon: <HiClipboardList size={20} /> },
-  { label: "Payment", href: "/dashboard/admin/payment", icon: <HiCreditCard size={20} /> },
-  { label: "Report", href: "/dashboard/admin/report", icon: <HiDocumentReport size={20} /> },
-  { label: "Approvals", href: "/dashboard/admin/approvals", icon: <HiCheckCircle size={20} /> },
-];
+  const navItems = [
+    { label: "Home", href: "/dashboard/admin/", icon: <HiHome size={20} /> },
+    {
+      label: "User",
+      href: "/dashboard/admin/user",
+      icon: <HiUser size={20} />,
+    },
+    {
+      label: "Distributor",
+      href: "/dashboard/admin/distributor",
+      icon: <HiUsers size={20} />,
+    },
+    {
+      label: "Group",
+      href: "/dashboard/admin/group",
+      icon: <HiClipboardList size={20} />,
+    },
+    {
+      label: "Payment",
+      href: "/dashboard/admin/payment",
+      icon: <HiCreditCard size={20} />,
+    },
+    {
+      label: "Report",
+      href: "/dashboard/admin/report",
+      icon: <HiDocumentReport size={20} />,
+    },
+    {
+      label: "Approvals",
+      href: "/dashboard/admin/approvals",
+      icon: <HiCheckCircle size={20} />,
+    },
+  ];
 
   const getButtonClass = (href) => {
     const currentPath = pathname.replace(/\/$/, ""); // remove trailing slash
@@ -114,51 +137,38 @@ const navItems = [
             ))}
           </nav>
 
-          {/* Right: Login / Logout (desktop only) */}
-          <div className="hidden md:flex flex-1 justify-end min-w-[140px] items-center space-x-4">
-            {user ? (
-              <>
-                <span className="text-gray-700 whitespace-nowrap">
-                  Hello, {user.email}
-                </span>
+         
+
+          {/* User Icon / Dropdown */}
+          <div className="relative flex items-center space-x-4">
+            {user && (
+              <div className="relative">
                 <button
-                  onClick={handleLogout}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition shadow whitespace-nowrap min-w-[80px]"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="text-gray-700 hover:text-blue-500 transition w-10 h-10 flex items-center justify-center rounded-full  "
+                  aria-label="User menu"
                 >
-                  Logout
+                  <HiUser size={24} />
                 </button>
-              </>
-            ) : (
-              <button
-                onClick={""}
-                aria-label="Login"
-                className="text-gray-700 hover:text-blue-500 transition w-10 h-10 flex items-center justify-center"
-              >
-                <HiUser size={24} />
-              </button>
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 text-xs bg-white shadow-lg rounded-md p-2 z-50">
+                    <p className="px-4 py-2 text-gray-700 font-medium  rounded-lg hover:bg-gray-100  transition duration-300 ease-in-out">
+                      {user.email}
+                    </p>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2  font-bold text-red-600 h rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
-          {/* Mobile: User Icon + Menu button */}
-          <div className="md:hidden flex items-center space-x-4">
-            {user ? (
-              <button
-               onClick={handleLogout}
-                aria-label="User Profile / Logout"
-                className="text-gray-700 hover:text-blue-500 transition w-10 h-10 flex items-center justify-center"
-              >
-                <HiUser size={24} />
-              </button>
-            ) : (
-              <button
-                onClick={""}
-                aria-label="Login"
-                className="text-gray-700 hover:text-blue-500 transition w-10 h-10 flex items-center justify-center"
-              >
-                <HiUser size={24} />
-              </button>
-            )}
-
+          {/* Mobile Menu */}
+          <div className="md:hidden flex items-center space-x-2">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-700 hover:text-blue-500 focus:outline-none"
@@ -170,13 +180,13 @@ const navItems = [
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown */}
       {menuOpen && (
         <nav className="md:hidden bg-white shadow-md border-t border-gray-200">
           <ul className="flex flex-col px-4 py-3 space-y-2 text-gray-700 font-semibold">
             {navItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} passHref>
+                <Link href={item.href}>
                   <div
                     onClick={() => setMenuOpen(false)}
                     className={`cursor-pointer block px-3 py-2 rounded transition ${
@@ -190,6 +200,17 @@ const navItems = [
                 </Link>
               </li>
             ))}
+            {user && (
+              <li className="border-t border-gray-200 pt-2">
+                <p className="px-3 py-2 text-gray-700">{user.email}</p>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 text-red-600 hover:bg-gray-100 transition"
+                >
+                  Logout
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
       )}
@@ -198,15 +219,6 @@ const navItems = [
 };
 
 export default Header;
-
-
-
-
-
-
-
-
-
 
 // "use client";
 // import Image from "next/image";
