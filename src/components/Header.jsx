@@ -118,7 +118,7 @@ const Header = () => {
                   className="text-gray-700 hover:text-gray-600 transition w-10 h-10 flex items-center justify-center rounded-full"
                   aria-label="User menu"
                 >
-                  <HiUser size={24} />
+                  <HiUser size={32} />
                 </button>
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 text-xs bg-white shadow-lg rounded-md p-2 z-50">
@@ -140,10 +140,10 @@ const Header = () => {
             <div ref={menuRef} className="md:hidden">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-gray-700 hover:text-gray-600 focus:outline-none"
+                className="text-gray-700 hover:text-gray-600 py-2 focus:outline-none"
                 aria-label="Toggle menu"
               >
-                {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+                {menuOpen ? <HiX size={32} /> : <HiMenu size={32} />}
               </button>
             </div>
           </div>
