@@ -147,7 +147,7 @@ const AuthModal = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-gradient-to-r from-blue-200 to-blue-400 relative">
+    <div className="flex sm:items-center items-start pt-8 justify-center h-screen w-screen bg-gradient-to-r from-blue-200 to-blue-400 relative">
       <div className="bg-stone-50 sm:flex-row flex-col rounded-2xl shadow-xl min-h-[70%] lg:w-[70%] md:w-[80%] w-[90%] overflow-hidden flex">
         {/* Left Section */}
         <div
