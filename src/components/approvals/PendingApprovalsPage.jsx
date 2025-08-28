@@ -11,6 +11,21 @@ export default function SignersPage() {
   const [viewMode, setViewMode] = useState("card");
   const [currentTab, setCurrentTab] = useState("all");
 
+  const [page, setPage] = useState(1);
+  const [currentMonth, setCurrentMonth] = useState("");
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const PAGE_SIZE_OPTIONS = [5, 10, 25, 50];
+
+  useEffect(() => {
+    if (page > totalPages) setPage(1);
+  }, [totalPages, page]);
+
+   const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setPage(1);
+  };
+
   const fetchSigners = async () => {
     setLoading(true);
     try {
@@ -58,49 +73,48 @@ export default function SignersPage() {
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Signers</h1>
 
-    <div className="flex sm:flex-row flex-col justify-between items-center">
+      <div className="flex sm:flex-row flex-col justify-between items-center">
         {/* Tabs */}
-      <div className="flex sm:w-72 w-full gap-2 mb-4 justify-between items-center  ">
-        {["all", "pending", "approved"].map((tab) => (
+        <div className="flex sm:w-72 w-full gap-2 mb-4 justify-between items-center  ">
+          {["all", "pending", "approved"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setCurrentTab(tab)}
+              className={`px-4 py-1.5 sm:w-24 w-full rounded text-sm font-medium transition ${
+                currentTab === tab
+                  ? "bg-blue-400 text-white border border-blue-500"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Table/Card toggle */}
+        <div className="flex sm:w-64 w-full gap-2 mb-4">
           <button
-            key={tab}
-            onClick={() => setCurrentTab(tab)}
-            className={`px-4 py-1.5 sm:w-24 w-full rounded text-sm font-medium transition ${
-              currentTab === tab
+            onClick={() => setViewMode("card")}
+            className={`px-4 w-full py-1.5 rounded text-sm font-medium transition ${
+              viewMode === "card"
                 ? "bg-blue-400 text-white border border-blue-500"
                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
             }`}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            Card View
           </button>
-        ))}
+          <button
+            onClick={() => setViewMode("table")}
+            className={`px-4 py-1.5 w-full rounded text-sm font-medium transition ${
+              viewMode === "table"
+                ? "bg-blue-400 text-white border border-blue-500"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+            }`}
+          >
+            Table View
+          </button>
+        </div>
       </div>
-
-      {/* Table/Card toggle */}
-      <div className="flex sm:w-64 w-full gap-2 mb-4">
-        <button
-          onClick={() => setViewMode("card")}
-          className={`px-4 w-full py-1.5 rounded text-sm font-medium transition ${
-            viewMode === "card"
-              ? "bg-blue-400 text-white border border-blue-500"
-              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-          }`}
-        >
-          Card View
-        </button>
-        <button
-          onClick={() => setViewMode("table")}
-          className={`px-4 py-1.5 w-full rounded text-sm font-medium transition ${
-            viewMode === "table"
-              ? "bg-blue-400 text-white border border-blue-500"
-              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-          }`}
-        >
-          Table View
-        </button>
-      </div>
-
-    </div>
       {loading ? (
         <p className="text-gray-500">Loading...</p>
       ) : filteredSigners.length === 0 ? (
@@ -148,7 +162,6 @@ export default function SignersPage() {
                       >
                         Reject
                       </button>
-                   
                     </td>
                   )}
                 </tr>
@@ -190,13 +203,63 @@ export default function SignersPage() {
                   >
                     Reject
                   </button>
-                 
                 </div>
               )}
             </div>
           ))}
         </div>
       )}
+
+      <nav className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
+              page === 1
+                ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                : "bg-blue-400 hover:bg-blue-500 text-white"
+            }`}
+          >
+            Previous
+          </button>
+
+          <span className="text-gray-700 font-medium">
+            Page <span className="font-bold">{page}</span> of{" "}
+            <span className="font-bold">{totalPages}</span>
+          </span>
+
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages || totalPages < 1}
+            className={`w-24 px-3 py-1.5 rounded-md transition text-sm text-center ${
+              page === totalPages || totalPages < 1
+                ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                : "bg-blue-400 hover:bg-blue-500 text-white"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center sm:justify-end gap-2">
+          <label htmlFor="pageSize" className="text-gray-700 font-medium">
+            Rows per page:
+          </label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+          >
+            {PAGE_SIZE_OPTIONS.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
+      </nav>
     </div>
   );
 }
