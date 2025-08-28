@@ -70,7 +70,7 @@ export default function SignersPage() {
   const getStatus = (s) => (s.isAdminApprove ? "approved" : "pending");
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-8 max-w-full mx-auto">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Signers</h1>
 
       <div className="flex sm:flex-row flex-col justify-between items-center">
