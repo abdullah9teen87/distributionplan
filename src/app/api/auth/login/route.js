@@ -18,10 +18,15 @@ export async function POST(req) {
     if (!user) {
       return errorResponse("User not found", 404);
     }
-
+    
     // Verify email
     if (!user.isVerified) {
       return errorResponse("Please verify your email before login", 403);
+    }
+    console.log("Found user:", user);
+    // Verify email
+    if (!user.isAdminApprove) {
+      return errorResponse("Please wait or contact admin will be approved you credentials", 403);
     }
 
     // Password check
@@ -36,6 +41,7 @@ export async function POST(req) {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
       "Login successful 🎉"
     );

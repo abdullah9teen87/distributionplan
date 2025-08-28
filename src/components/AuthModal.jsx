@@ -2,6 +2,7 @@
 import { BASE_URL } from "@/data/baseurl";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -9,7 +10,9 @@ const AuthModal = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,8 +25,8 @@ const AuthModal = () => {
   };
 
   const handleLoginChange = (e) => {
-  setLoginData({ ...loginData, [e.target.name]: e.target.value });
-};
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  };
 
   // Signup API Call
   const handleSignup = async (e) => {
@@ -114,10 +117,25 @@ const AuthModal = () => {
       });
 
       if (res.data.success) {
+        console.log("Login response:", res.data);
         toast.success("Login successful 🎉");
-        console.log("User:", res.data.data);
-        setLoginData({  email: "", password: ""});
 
+        const user = res.data.data; // <-- get user from response
+        console.log("User:", user);
+
+        // Save user to localStorage
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+
+        setLoginData({ email: "", password: "" });
+
+        // Redirect based on role
+        if (user.role === "admin") {
+          router.push("/dashboard/admin");
+        } else {
+          router.push("/dashboard/distributor");
+        }
       } else {
         toast.error(res.data.message || "Login failed ❌");
       }
@@ -127,8 +145,6 @@ const AuthModal = () => {
       setLoading(false);
     }
   };
-  console.log("isLogin:", isLogin);
-  console.log("isloading:", loading);
 
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-gradient-to-r from-blue-200 to-blue-400 relative">
@@ -141,7 +157,12 @@ const AuthModal = () => {
               : "sm:translate-x-full bg-blue-400"
           } z-999 transition-all duration-500 ease-in-out p-8 flex flex-col justify-center items-center  text-white`}
         >
-          <Image src={"/DistributionPlan.png"} width={100} height={100} />
+          <Image
+            src={"/DistributionPlan.png"}
+            width={100}
+            height={100}
+            alt={"Logo"}
+          />
           <h2 className="text-3xl font-bold mb-4 transition-all duration-700">
             {isLogin ? "Welcome Back!" : "Hello, Friend!"}
           </h2>
@@ -156,7 +177,6 @@ const AuthModal = () => {
               setShowOtp(false);
             }}
             className="mt-6 px-6 py-2 bg-white text-blue-400 rounded-lg font-semibold shadow hover:bg-gray-100 transition"
-            
           >
             {isLogin ? "Sign Up" : "Login"}
           </button>
@@ -170,9 +190,7 @@ const AuthModal = () => {
         >
           <div
             className={`sm:w-full transition-all duration-500 ease-in-out ${
-              isLogin
-                ? "sm:-translate-x-0 flex"
-                : "sm:translate-x-full hidden"
+              isLogin ? "sm:-translate-x-0 flex" : "sm:translate-x-full hidden"
             }`}
           >
             <form className="space-y-4  w-full " onSubmit={handleLogin}>
@@ -212,8 +230,8 @@ const AuthModal = () => {
           <div
             className={`sm:w-full transition-all  duration-500 ease-in-out ${
               isLogin
-              ? "sm:translate-x-full translate-y-full hidden"
-              : "sm:translate-x-0 translate-x-0 flex"
+                ? "sm:translate-x-full translate-y-full hidden"
+                : "sm:translate-x-0 translate-x-0 flex"
             }`}
           >
             <form onSubmit={handleSignup} className="space-y-4">

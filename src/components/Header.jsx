@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   HiMenu,
@@ -12,36 +12,80 @@ import {
   HiHome,
 } from "react-icons/hi";
 
-const Header = ({ user, onLogin, onLogout }) => {
+const Header = ({ onLogin, onLogout }) => {
+  const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userString = localStorage.getItem("user");
+
+      let userData = null;
+
+      try {
+        userData = userString ? JSON.parse(userString) : null;
+      } catch (err) {
+        console.warn("Error parsing user from localStorage:", err);
+        userData = null; // fallback
+      }
+
+      setUser(userData);
+    }
+  }, []);
 
   const navItems = [
-    { label: "Home", href: "/", icon: <HiHome size={20} /> },
-    { label: "User", href: "/user", icon: <HiUser size={20} /> },
-    { label: "Distributor", href: "/distributor", icon: <HiUsers size={20} /> },
-    { label: "Group", href: "/group", icon: <HiCreditCard size={20} /> },
-    { label: "Payment", href: "/payment", icon: <HiCreditCard size={20} /> },
-    { label: "Report", href: "/report", icon: <HiCreditCard size={20} /> },
+    { label: "Home", href: "/dashboard/admin/", icon: <HiHome size={20} /> },
+    {
+      label: "User",
+      href: "/dashboard/admin/user",
+      icon: <HiUser size={20} />,
+    },
+    {
+      label: "Distributor",
+      href: "/dashboard/admin/distributor",
+      icon: <HiUsers size={20} />,
+    },
+    {
+      label: "Group",
+      href: "/dashboard/admin/group",
+      icon: <HiCreditCard size={20} />,
+    },
+    {
+      label: "Payment",
+      href: "/dashboard/admin/payment",
+      icon: <HiCreditCard size={20} />,
+    },
+    {
+      label: "Report",
+      href: "/dashboard/admin/report",
+      icon: <HiCreditCard size={20} />,
+    },
   ];
 
-  // Highlight tab if current path starts with href
   const getButtonClass = (href) => {
-    if (href === "/") {
-      return pathname === "/"
-        ? "flex items-center space-x-2 px-3 py-1 rounded-md shadow transition bg-blue-500 text-white"
+    const currentPath = pathname.replace(/\/$/, ""); // remove trailing slash
+    const hrefPath = href.replace(/\/$/, "");
+
+    // Exact match for home
+    if (hrefPath === "/dashboard/admin") {
+      return currentPath === hrefPath
+        ? "flex items-center space-x-2 px-3 py-1 rounded-md shadow transition bg-gray-600 text-white"
         : "flex items-center space-x-2 px-3 py-1 rounded-md shadow transition bg-white text-gray-600 hover:bg-gray-600 hover:text-white";
     }
 
     return `flex items-center space-x-2 px-3 py-1 rounded-md shadow transition ${
-      pathname.startsWith(href)
-        ? "bg-gray-400 text-gray-800"
+      currentPath.startsWith(hrefPath)
+        ? "bg-gray-600 text-white"
         : "bg-white text-gray-600 hover:bg-gray-600 hover:text-white"
     }`;
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-200 to-blue-300 shadow-md sticky top-0 z-50">
+    <header
+      className={
+        "bg-gradient-to-r from-blue-200 to-blue-300 shadow-md top-0 z-50 sticky"
+      }
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16 justify-between">
           {/* Left: Logo */}
