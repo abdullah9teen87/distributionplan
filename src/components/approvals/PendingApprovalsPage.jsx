@@ -58,13 +58,14 @@ export default function SignersPage() {
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Signers</h1>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex sm:flex-row flex-col justify-between items-center">
+        {/* Tabs */}
+      <div className="flex sm:w-72 w-full gap-2 mb-4 justify-between items-center  ">
         {["all", "pending", "approved"].map((tab) => (
           <button
             key={tab}
             onClick={() => setCurrentTab(tab)}
-            className={`px-4 py-1.5 rounded text-sm font-medium transition ${
+            className={`px-4 py-1.5 sm:w-24 w-full rounded text-sm font-medium transition ${
               currentTab === tab
                 ? "bg-blue-400 text-white border border-blue-500"
                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
@@ -76,10 +77,10 @@ export default function SignersPage() {
       </div>
 
       {/* Table/Card toggle */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex sm:w-64 w-full gap-2 mb-4">
         <button
           onClick={() => setViewMode("card")}
-          className={`px-4 py-1.5 rounded text-sm font-medium transition ${
+          className={`px-4 w-full py-1.5 rounded text-sm font-medium transition ${
             viewMode === "card"
               ? "bg-blue-400 text-white border border-blue-500"
               : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
@@ -89,7 +90,7 @@ export default function SignersPage() {
         </button>
         <button
           onClick={() => setViewMode("table")}
-          className={`px-4 py-1.5 rounded text-sm font-medium transition ${
+          className={`px-4 py-1.5 w-full rounded text-sm font-medium transition ${
             viewMode === "table"
               ? "bg-blue-400 text-white border border-blue-500"
               : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
@@ -99,6 +100,7 @@ export default function SignersPage() {
         </button>
       </div>
 
+    </div>
       {loading ? (
         <p className="text-gray-500">Loading...</p>
       ) : filteredSigners.length === 0 ? (
@@ -146,12 +148,7 @@ export default function SignersPage() {
                       >
                         Reject
                       </button>
-                      <button
-                        onClick={() => handleAction(s._id, "block")}
-                        className={`w-full px-3 py-1 rounded ${actionButtonClass}`}
-                      >
-                        Block
-                      </button>
+                   
                     </td>
                   )}
                 </tr>
@@ -193,12 +190,7 @@ export default function SignersPage() {
                   >
                     Reject
                   </button>
-                  <button
-                    onClick={() => handleAction(s._id, "block")}
-                    className={`flex-1 px-3 py-1 rounded ${actionButtonClass}`}
-                  >
-                    Block
-                  </button>
+                 
                 </div>
               )}
             </div>
