@@ -139,7 +139,7 @@ const AuthModal = () => {
             isLogin
               ? "sm:translate-x-0 bg-blue-400"
               : "sm:translate-x-full bg-blue-400"
-          } z-999 transition-all duration-500 ease-in-out  p-8 flex flex-col justify-center items-center  text-white`}
+          } z-999 transition-all duration-500 ease-in-out p-8 flex flex-col justify-center items-center  text-white`}
         >
           <Image src={"/DistributionPlan.png"} width={100} height={100} />
           <h2 className="text-3xl font-bold mb-4 transition-all duration-700">
@@ -169,10 +169,10 @@ const AuthModal = () => {
           } transition-all duration-500 ease-in-out items-center justify-center`}
         >
           <div
-            className={`sm:w-full h-full transition-all duration-500 ease-in-out ${
+            className={`sm:w-full transition-all duration-500 ease-in-out ${
               isLogin
-                ? "sm:-translate-x-0 -translate-y-0 flex"
-                : "sm:translate-x-full translate-y-full hidden"
+                ? "sm:-translate-x-0 flex"
+                : "sm:translate-x-full hidden"
             }`}
           >
             <form className="space-y-4  w-full " onSubmit={handleLogin}>
@@ -210,7 +210,7 @@ const AuthModal = () => {
           </div>
 
           <div
-            className={`sm:w-full h-full transition-all  duration-500 ease-in-out ${
+            className={`sm:w-full transition-all  duration-500 ease-in-out ${
               isLogin
               ? "sm:translate-x-full translate-y-full hidden"
               : "sm:translate-x-0 translate-x-0 flex"
