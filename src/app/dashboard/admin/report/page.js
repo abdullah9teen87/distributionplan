@@ -1,16 +1,23 @@
+
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import UserReportTable from "@/components/download/UserReportTable";
+import DistributorReportTable from "@/components/download/DistributorReportTable";
+import GroupReportTable from "@/components/download/GroupReportTable";
+import PaymentReportTable from "@/components/download/PaymentReportTable";
+import SignerReportTable from "@/components/download/SignerReportTable";
+import { downloadCSV, downloadPDF } from "@/utils/reportDownloader";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { BASE_URL } from "@/data/baseurl";
+import { getColumnWidths } from "@/data/reportColumnWidht";
 
 export default function ReportsPage() {
-  const [reportType, setReportType] = useState("user");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [fileType, setFileType] = useState("csv"); // csv or pdf
-  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [reportType, setReportType] = useState("");
+  const [fromDate, setFromDate] = useState(""); // "2025-01"
+  const [toDate, setToDate] = useState(""); // "2025-08"
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const reportTypes = [
@@ -21,156 +28,193 @@ export default function ReportsPage() {
     { value: "signer", label: "Signer" },
   ];
 
-  // Define columns per report type
-  const reportColumns = {
-    user: ["name", "email", "role", "status", "createdAt"],
-    distributor: ["name", "email", "region", "status", "createdAt"],
-    group: ["groupName", "membersCount", "createdAt"],
-    payment: ["transactionId", "user", "amount", "status", "date"],
-    signer: ["name", "email", "role", "isAdminApprove", "createdAt"],
-  };
 
-  useEffect(() => {
-    // reset selected columns on report type change
-    setSelectedColumns(reportColumns[reportType] || []);
-  }, [reportType]);
 
-  const toggleColumn = (col) => {
-    setSelectedColumns((prev) =>
-      prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col]
-    );
-  };
-
-  const downloadReport = async () => {
-    if (!fromDate || !toDate) {
-      toast.error("Please select both start and end dates.");
-      return;
-    }
-
-    if (!selectedColumns.length) {
-      toast.error("Please select at least one column.");
-      return;
-    }
-
+  const handleGenerateReport = async () => {
+    if (!reportType || !fromDate || !toDate) return;
     setLoading(true);
+    setData([]);
+
     try {
       const res = await axios.get(`${BASE_URL}/api/reports/${reportType}`, {
-        responseType: "blob",
-        params: {
-          from: fromDate,
-          to: toDate,
-          columns: selectedColumns.join(","),
-          fileType,
-        },
+        params: { fromDate, toDate },
       });
-
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        `${reportType}-report-${fromDate}-to-${toDate}.${fileType}`
-      );
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      toast.success("Report downloaded successfully!");
+      setData(res.data.data);
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to download report");
+      console.error("Report fetch error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const renderTable = () => {
+    switch (reportType) {
+      case "user":
+        return <UserReportTable data={data} />;
+      case "distributor":
+        return <DistributorReportTable data={data} />;
+      case "group":
+        return <GroupReportTable data={data} />;
+      case "payment":
+        return <PaymentReportTable data={data} />;
+      case "signer":
+        return <SignerReportTable data={data} />;
+      default:
+        return null;
+    }
+  };
+
+  const getReportTitle = (type) => {
+  switch (type) {
+    case "user":
+      return "User Report";
+    case "distributor":
+      return "Distributor Report";
+    case "group":
+      return "Group Report";
+    case "payment":
+      return "Payment Report";
+    case "signer":
+      return "Signer Report";
+    default:
+      return "Report";
+  }
+};
+
+
+
+
+
+
+
+
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="w-full h-screen bg-gray-100 p-6 mx-auto">
       <h1 className="text-2xl font-bold mb-6">Reports</h1>
 
-      <div className="bg-white shadow rounded-lg p-6 space-y-4">
-        {/* Report Type */}
-        <div>
-          <label className="block font-medium mb-1">Report Type</label>
-          <select
-            value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          >
-            {reportTypes.map((r) => (
-              <option key={r.value} value={r.value}>
-                {r.label}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className=" bg-white  shadow rounded-lg p-6 space-y-4">
+        {/* Report Selection + Date Range in Grid */}
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-6">
+          {/* Report Type */}
+          <div>
+            <label className="block font-medium mb-1">Select Report</label>
+            <select
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+              className="w-full border border-gray-400 rounded p-2.5"
+            >
+              <option value="">-- Choose Report --</option>
+              {reportTypes.map((r) => (
+                <option key={r.value} value={r.value} className="py-4">
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* Date Range */}
-        <div className="flex gap-4">
-          <div className="flex-1">
+          {/* From Date */}
+          <div>
             <label className="block font-medium mb-1">From</label>
             <input
-              type="date"
+              type="month"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-400 px-3 py-2 rounded"
             />
           </div>
-          <div className="flex-1">
+
+          {/* To Date */}
+          <div>
             <label className="block font-medium mb-1">To</label>
             <input
-              type="date"
+              type="month"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full border border-gray-400 px-3 py-2 rounded"
             />
           </div>
-        </div>
 
-        {/* File Type */}
-        <div>
-          <label className="block font-medium mb-1">File Type</label>
-          <select
-            value={fileType}
-            onChange={(e) => setFileType(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          >
-            <option value="csv">CSV</option>
-            <option value="pdf">PDF</option>
-          </select>
-        </div>
-
-        {/* Column Selection */}
-        <div>
-          <label className="block font-medium mb-1">Select Columns</label>
-          <div className="flex flex-wrap gap-2">
-            {reportColumns[reportType].map((col) => (
-              <button
-                key={col}
-                onClick={() => toggleColumn(col)}
-                className={`px-3 py-1 rounded border ${
-                  selectedColumns.includes(col)
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-700 border-gray-300"
-                }`}
-              >
-                {col}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Download Button */}
-        <div>
+          {/* Generate Button */}
           <button
-            onClick={downloadReport}
+            onClick={handleGenerateReport}
             disabled={loading}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+            className={`mt-6 h-fit py-2.5 px-4 text-white rounded-lg shadow ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            }`}
           >
-            {loading ? "Downloading..." : "Download Report"}
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Loading...
+              </span>
+            ) : (
+              "Generate Report"
+            )}
           </button>
         </div>
       </div>
+
+      {/* Report Table Preview */}
+      {loading && (
+        <div className="mt-6 text-center text-gray-600">Fetching report...</div>
+      )}
+
+      {!loading && data.length > 0 && (
+        <div className="mt-6 space-y-4">
+          {renderTable()}
+
+          {/* Download Options */}
+          <div className="w-full grid md:grid-cols-6 grid-cols-2 gap-4">
+            <button
+              onClick={() =>
+                downloadCSV(
+                  data,
+                  `${reportType}-report.csv`,
+                  `${getReportTitle(reportType)}`
+                )
+              }
+              className="px-4 py-2 bg-blue-400 hover:bg-blue-600 text-white rounded-lg shadow"
+            >
+              Download CSV
+            </button>
+            <button
+              onClick={() =>
+                downloadPDF(
+                  data,
+                  `${reportType}-report.pdf`,
+                  `${getReportTitle(reportType)}`,
+                  getColumnWidths(reportType)
+                )
+              }
+              className="px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg shadow"
+            >
+              Download PDF
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
