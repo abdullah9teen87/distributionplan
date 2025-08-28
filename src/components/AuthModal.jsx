@@ -1,6 +1,7 @@
 "use client";
 import { BASE_URL } from "@/data/baseurl";
 import axios from "axios";
+import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -116,6 +117,7 @@ const AuthModal = () => {
         toast.success("Login successful 🎉");
         console.log("User:", res.data.data);
         setLoginData({  email: "", password: ""});
+
       } else {
         toast.error(res.data.message || "Login failed ❌");
       }
@@ -139,6 +141,7 @@ const AuthModal = () => {
               : "sm:translate-x-full bg-blue-400"
           } z-999 transition-all duration-500 ease-in-out  p-8 flex flex-col justify-center items-center  text-white`}
         >
+          <Image src={"/DistributionPlan.png"} width={100} height={100} />
           <h2 className="text-3xl font-bold mb-4 transition-all duration-700">
             {isLogin ? "Welcome Back!" : "Hello, Friend!"}
           </h2>
@@ -161,18 +164,18 @@ const AuthModal = () => {
 
         {/* Right Section */}
         <div
-          className={`w-full sm:w-1/2 bg-gray-200 p-8 flex ${
+          className={`w-full sm:w-1/2 bg-gray-100 p-8 flex ${
             isLogin ? "sm:translate-x-0" : "sm:-translate-x-full"
           } transition-all duration-500 ease-in-out items-center justify-center`}
         >
           <div
-            className={`w-full bg-green-300 transition-all duration-500 ease-in-out ${
+            className={`sm:w-full h-full transition-all duration-500 ease-in-out ${
               isLogin
-                ? " translate-x-0"
-                : "-translate-x-0"
+                ? "sm:-translate-x-0 -translate-y-0 flex"
+                : "sm:translate-x-full translate-y-full hidden"
             }`}
           >
-            <form className="space-y-4 bg-amber-200 w-full " onSubmit={handleLogin}>
+            <form className="space-y-4  w-full " onSubmit={handleLogin}>
               <h3 className="text-2xl font-bold text-gray-800 text-center mb-4">
                 Login
               </h3>
@@ -182,7 +185,7 @@ const AuthModal = () => {
                 onChange={handleLoginChange}
                 value={loginData.email}
                 placeholder="Email"
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border  border-gray-400 bg-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <input
                 type="password"
@@ -190,7 +193,7 @@ const AuthModal = () => {
                 onChange={handleLoginChange}
                 value={loginData.password}
                 placeholder="Password"
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border  border-gray-400 px-4 bg-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <button
                 type="submit"
@@ -207,10 +210,10 @@ const AuthModal = () => {
           </div>
 
           <div
-            className={`w-full transition-all bg-red-400 duration-500 ease-in-out ${
+            className={`sm:w-full h-full transition-all  duration-500 ease-in-out ${
               isLogin
-                ? "translate-x-10"
-                : "opacity-100 translate-x-0"
+              ? "sm:translate-x-full translate-y-full hidden"
+              : "sm:translate-x-0 translate-x-0 flex"
             }`}
           >
             <form onSubmit={handleSignup} className="space-y-4">
@@ -223,7 +226,7 @@ const AuthModal = () => {
                 onChange={handleChange}
                 value={formData.name}
                 placeholder="Name"
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border px-4 py-2   border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 disabled={loading}
               />
 
@@ -233,7 +236,7 @@ const AuthModal = () => {
                 onChange={handleChange}
                 value={formData.email}
                 placeholder="Email"
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border  border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 disabled={loading}
               />
               <input
@@ -242,7 +245,7 @@ const AuthModal = () => {
                 onChange={handleChange}
                 value={formData.password}
                 placeholder="Password"
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border px-4 py-2 rounded-lg   border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 disabled={loading}
               />
               <button
