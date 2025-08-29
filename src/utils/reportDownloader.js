@@ -1,6 +1,7 @@
 import { unparse } from "papaparse";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { getColumnMapping } from "@/data/getColumnMapping";
 // import { jsPDF } from "jspdf";
 // import autoTable from "jspdf-autotable";
 
@@ -37,66 +38,84 @@ export const downloadCSV = (data, filename, title = "Report") => {
   link.remove();
 };
 
-
-// export const downloadPDF = (data, filename, title = "Report", columnWidths = {}) => {
-//   if (!data || data.length === 0) return;
-
-//   const doc = new jsPDF();
-
-//   // Title & Date
-//   const now = new Date();
-//   const reportDate = now.toLocaleString();
-//   doc.setFontSize(16);
-//   doc.text(`${title}`, 14, 15);
-//   doc.setFontSize(10);
-//   doc.text(`Generated: ${reportDate}`, 14, 22);
-
-//   const columns = Object.keys(data[0]);
-//   const rows = data.map((row) => columns.map((col) => row[col]));
-
-//   autoTable(doc, {
-//     startY: 30,
-//     head: [columns],
-//     body: rows,
-//     styles: { fontSize: 10 },
-//     columnStyles: columns.reduce((acc, col, idx) => {
-//       if (columnWidths[col]) acc[idx] = { cellWidth: columnWidths[col] };
-//       return acc;
-//     }, {}),
-//   });
-
-//   doc.save(filename);
-// };
-
-
-
-
-export const downloadPDF = (data, filename, title = "Report", columnWidths = {}, orientation = "landscape") => {
+export const downloadPDF = (
+  data,
+  filename,
+  title = "Report", 
+  columnWidths = {},
+  orientation = "landscape",
+  reportType
+) => {
   if (!data || data.length === 0) return;
 
   const doc = new jsPDF({ orientation });
 
+  const logo = "/DistributionPlan.png"; // public folder me rakho
+  doc.addImage(logo, "PNG", 5, 5, 10, 10);
+
+
   // Title & Date
   const now = new Date();
   const reportDate = now.toLocaleString();
-  doc.setFontSize(12);
-  doc.text(title, 10, 13);
-  doc.setFontSize(8);
-  doc.text(`Generated: ${reportDate}`, 10, 18);
 
-  // Use only the columns defined in columnWidths
+  doc.setFontSize(12);
+  doc.text(title, doc.internal.pageSize.getWidth() / 2, 12, {
+    align: "center",
+  });
+
+  doc.setFontSize(8);
+  doc.text(
+    `Generated: ${reportDate}`,
+    doc.internal.pageSize.getWidth() / 2,
+    17,
+    { align: "center" }
+  );
+
+  // Only defined columns
   const columns = Object.keys(columnWidths);
+  const columnMap = getColumnMapping(reportType);
+
   const rows = data.map((row) =>
-    columns.map((col) => row[col] ?? "") // take only defined columns
+    columns.map((label) => {
+      const key = columnMap[label];
+      return row[key] ?? "";
+    })
   );
 
   autoTable(doc, {
-    startY: 30,
+    startY: 25,
     head: [columns],
     body: rows,
-    styles: { fontSize: 10 },
+    tableWidth: "wrap",
+    margin: { left: 10, right: 10 },
+    tableWidth: "wrap",
+
+    styles: {
+      fontSize: 7,
+      cellPadding: 2,
+      lineWidth: 0.1,
+      lineColor: [0, 0, 0],
+      textColor: [0, 0, 0],
+      fillColor: [255, 255, 255],
+    },
+
+    headStyles: {
+      fontSize: 7,
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      lineWidth: 0.2,
+      lineColor: [0, 0, 0],
+      fontStyle: "bold",
+       halign: "center",
+      valign: "middle",
+    },
+
+    // ✅ Fix: give safe default width if not defined
     columnStyles: columns.reduce((acc, col, idx) => {
-      if (columnWidths[col]) acc[idx] = { cellWidth: columnWidths[col] };
+      const width = columnWidths[col];
+      acc[idx] = {
+        cellWidth: typeof width === "number" && !isNaN(width) ? width : "auto",
+      };
       return acc;
     }, {}),
   });

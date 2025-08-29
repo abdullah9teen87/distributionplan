@@ -2,22 +2,22 @@ export const getColumnWidths = (type) => {
   switch (type) {
     case "user":
       return {
-        "Reg. No": 25,
-        "Registration Date": 30,
-        "Gender": 20,
-        "Name": 40,
-        "Age": 20,
-        "Father/Husband Name": 40,
-        "Contact": 35,
-        "Address": 50,
-        "Family Members": 25,
-        "CNIC": 30,
-        "Status": 25,
-        "Job Status": 25,
-        "Job Type": 30,
-        "Monthly Income": 25,
-        "Referral Person": 35,
-        "Verified": 20,
+        "Reg. No": 10,
+        // "Registration Date": 15,
+        "Gender": 15,
+        "Name": 25,
+        "Age": 10,
+        "Father/Husband Name": 25,
+        "Contact": 25,
+        "Address": 35,
+        "Family Members": 15,
+        "CNIC": 25,
+        "Status": 20,
+        "Job Status": 20,
+        "Job Type": 20,
+        "Monthly Income": 15,
+        "Referral Person": 20,
+        // "Verified": 20,
       };
 
     case "distributor":

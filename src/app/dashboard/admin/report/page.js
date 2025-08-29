@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useState } from "react";
@@ -27,8 +25,6 @@ export default function ReportsPage() {
     { value: "payment", label: "Payment" },
     { value: "signer", label: "Signer" },
   ];
-
-
 
   const handleGenerateReport = async () => {
     if (!reportType || !fromDate || !toDate) return;
@@ -65,29 +61,21 @@ export default function ReportsPage() {
   };
 
   const getReportTitle = (type) => {
-  switch (type) {
-    case "user":
-      return "User Report";
-    case "distributor":
-      return "Distributor Report";
-    case "group":
-      return "Group Report";
-    case "payment":
-      return "Payment Report";
-    case "signer":
-      return "Signer Report";
-    default:
-      return "Report";
-  }
-};
-
-
-
-
-
-
-
-
+    switch (type) {
+      case "user":
+        return "User Report";
+      case "distributor":
+        return "Distributor Report";
+      case "group":
+        return "Group Report";
+      case "payment":
+        return "Payment Report";
+      case "signer":
+        return "Signer Report";
+      default:
+        return "Report";
+    }
+  };
 
   return (
     <div className="w-full h-screen bg-gray-100 p-6 mx-auto">
@@ -199,19 +187,23 @@ export default function ReportsPage() {
             >
               Download CSV
             </button>
+
             <button
               onClick={() =>
                 downloadPDF(
                   data,
                   `${reportType}-report.pdf`,
-                  `${getReportTitle(reportType)}`,
-                  getColumnWidths(reportType)
+                  getReportTitle(reportType),
+                  getColumnWidths(reportType),
+                  "landscape",
+                  reportType // <-- yahan bhi
                 )
               }
               className="px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg shadow"
             >
               Download PDF
             </button>
+
           </div>
         </div>
       )}
