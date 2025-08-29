@@ -51,7 +51,7 @@ export const downloadPDF = (
   const doc = new jsPDF({ orientation });
 
   const logo = "/DistributionPlan.png"; // public folder me rakho
-  doc.addImage(logo, "PNG", 5, 5, 10, 10);
+  doc.addImage(logo, "PNG", 10, 10, 10, 10);
 
 
   // Title & Date

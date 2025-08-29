@@ -22,19 +22,19 @@ export const getColumnWidths = (type) => {
 
     case "distributor":
       return {
-        "Reg. No": 25,
-        "Registration Date": 30,
-        "Name": 40,
-        "Father/Husband Name": 40,
-        "Gender": 20,
-        "Age": 20,
-        "Contact": 35,
-        "Address": 50,
+        "Reg. No": 10,
+        // "Registration Date": 30,
+        "Name": 35,
+        "Father/Husband Name": 35,
+        "Gender": 15,
+        "Age": 15,
+        "Contact": 20,
+        "Address": 40,
         "CNIC": 30,
-        "Status": 25,
-        "Job Status": 25,
+        "Status": 20,
+        "Job Status": 20,
         "Referral Person": 35,
-        "Verified": 20,
+        // "Verified": 20,
       };
 
     case "signer":

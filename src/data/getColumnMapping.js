@@ -22,7 +22,7 @@ export const getColumnMapping = (type) => {
     case "distributor":
       return {
         "Reg. No": "registrationNumber",
-        "Registration Date": "registrationDate",
+        // "Registration Date": "registrationDate",
         Name: "name",
         "Father/Husband Name": "fatherHusbandName",
         Gender: "gender",
