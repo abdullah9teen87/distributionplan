@@ -25,13 +25,75 @@ const AuthModal = () => {
     otp: "",
   });
 
+  // const handleChange = (e) => {
+  //    const { name, email, mobile, value, type } = e.target;
+  //   let formattedValue = value;
+
+  //   if (name === "mobile") {
+  //     formattedValue = formatContact(value);
+  //   }
+
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  // };
+
+  // const formatContact = (value) => {
+  //   const digits = value.replace(/\D/g, "").slice(0, 11);
+  //   if (digits.length <= 4) return digits;
+  //   return `${digits.slice(0, 4)}-${digits.slice(4, 11)}`;
+  // };
+
+  const formatContact = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11); // only digits, max 11
+    if (digits.length <= 4) return digits;
+    return `${digits.slice(0, 4)}-${digits.slice(4)}`; // 0312-2255770
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === "mobile") {
+      formattedValue = formatContact(value); // format mobile input
+    }
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue, // use formattedValue, not raw value
+    });
   };
 
   const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === "identifier" && !value.includes("@")) {
+      let identifier = loginData.identifier;
+
+      // Agar email nahi hai → treat as mobile aur normalize
+      if (!identifier.includes("@")) {
+        identifier = formatContact(identifier);
+      }
+      // If it's a mobile (no "@"), normalize it
+      formattedValue = formatContact(value);
+    }
+
+    setLoginData({
+      ...loginData,
+      [name]: formattedValue, // <-- normalized with dash
+    });
   };
+
+  // const handleLoginChange = (e) => {
+  // const { name, value } = e.target;
+  // let formattedValue = value;
+
+  // if (name === "mobile") {
+  //   formattedValue = formatContact(value); // format mobile input
+  // }
+
+  //   setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  // };
 
   // Signup API Call
   const handleSignup = async (e) => {
@@ -218,7 +280,7 @@ const AuthModal = () => {
 
               <div className="relative w-full">
                 <input
-                  type={showPassword ? "text" : "password"} // 👈 show/hide toggle
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   onChange={handleLoginChange}
                   value={loginData.password}
