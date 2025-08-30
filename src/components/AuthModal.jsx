@@ -192,7 +192,7 @@ const AuthModal = () => {
         console.log("Login response:", res.data);
         toast.success("Login successful 🎉");
 
-        const user = res.data.data; // <-- get user from response
+        const user = res.data.data;
         console.log("User:", user);
 
         // Save user to localStorage
