@@ -7,6 +7,13 @@ const LoginHistorySchema = new mongoose.Schema(
     status: { type: String, enum: ["success", "failed"], default: "failed" },
     ip: String,
     userAgent: String,
+
+    // 🔹 Location fields
+    latitude: Number,
+    longitude: Number,
+    city: String,
+    region: String,
+    country: String,
   },
   { timestamps: true } // createdAt, updatedAt
 );

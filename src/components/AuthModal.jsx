@@ -177,16 +177,54 @@ const AuthModal = () => {
   };
 
   // Login API Call
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const res = await axios.post(`${BASE_URL}/api/auth/login`, {
+  //       // email: loginData.email,
+  //       // mobile: loginData.mobile,
+  //       identifier: loginData.identifier,
+  //       password: loginData.password,
+  //     });
+
+  //     if (res.data.success) {
+  //       console.log("Login response:", res.data);
+  //       toast.success("Login successful 🎉");
+
+  //       const user = res.data.data;
+  //       console.log("User:", user);
+
+  //       // Save user to localStorage
+  //       if (typeof window !== "undefined") {
+  //         localStorage.setItem("user", JSON.stringify(user));
+  //       }
+
+  //       setLoginData({ email: "", mobile: "", password: "" });
+
+  //       // Redirect based on role
+  //       if (user.role === "admin") {
+  //         router.push("/dashboard/admin");
+  //       } else {
+  //         router.push("/dashboard/distributor");
+  //       }
+  //     } else {
+  //       toast.error(res.data.message || "Login failed ❌");
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Login failed ❌");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
+
+  const doLogin = async (payload) => {
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
-        // email: loginData.email,
-        // mobile: loginData.mobile,
-        identifier: loginData.identifier,
-        password: loginData.password,
-      });
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, payload);
 
       if (res.data.success) {
         console.log("Login response:", res.data);
@@ -200,7 +238,7 @@ const AuthModal = () => {
           localStorage.setItem("user", JSON.stringify(user));
         }
 
-        setLoginData({ email: "", mobile: "", password: "" });
+        setLoginData({ email: "", mobile: "", identifier: "", password: "" });
 
         // Redirect based on role
         if (user.role === "admin") {
@@ -217,6 +255,37 @@ const AuthModal = () => {
       setLoading(false);
     }
   };
+
+  // 🔹 Try to get location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        doLogin({
+          identifier: loginData.identifier,
+          password: loginData.password,
+          latitude,
+          longitude,
+        });
+      },
+      (error) => {
+        console.warn("Location permission denied:", error);
+        // fallback: call login without location
+        doLogin({
+          identifier: loginData.identifier,
+          password: loginData.password,
+        });
+      }
+    );
+  } else {
+    // If browser doesn't support geolocation
+    doLogin({
+      identifier: loginData.identifier,
+      password: loginData.password,
+    });
+  }
+};
+
 
   return (
     <div className="flex sm:items-center items-start pt-8 justify-center h-screen w-screen bg-gradient-to-r from-blue-200 to-blue-400 relative">
