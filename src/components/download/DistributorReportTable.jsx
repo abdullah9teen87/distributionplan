@@ -12,7 +12,7 @@ export default function DistributorReportTable({ data }) {
         <thead className="bg-gray-200 ">
           <tr>
             <th className="p-2 border w-1/12 truncate">Reg No.</th>
-            <th className="p-2 border w-2/12 truncate">Nae</th>
+            <th className="p-2 border w-2/12 truncate">Name</th>
             <th className="p-2 border w-2/12 truncate">Father/Husband Name</th>
             <th className="p-2 border w-1/12 truncate">Gender</th>
             <th className="p-2 border w-1/12 truncate">Age</th>

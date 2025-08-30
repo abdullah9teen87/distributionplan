@@ -5,17 +5,22 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { HiOutlineX } from "react-icons/hi";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const AuthModal = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loginData, setLoginData] = useState({ identifier: "", password: "" });
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    mobile: "",
     password: "",
     otp: "",
   });
@@ -36,6 +41,7 @@ const AuthModal = () => {
       const res = await axios.post(`${BASE_URL}/api/auth/signup`, {
         name: formData.name,
         email: formData.email,
+        mobile: formData.mobile,
         password: formData.password,
       });
 
@@ -54,24 +60,24 @@ const AuthModal = () => {
   };
 
   // Resend OTP
-  const handleResendOtp = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(`${BASE_URL}/api/auth/resend-otp`, {
-        email: formData.email,
-      });
+  // const handleResendOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await axios.post(`${BASE_URL}/api/auth/resend-otp`, {
+  //       email: formData.email,
+  //     });
 
-      if (res.data.success) {
-        toast.success("OTP resent successfully 📩");
-      } else {
-        toast.error(res.data.message || "Failed to resend OTP ❌");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Resend failed ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (res.data.success) {
+  //       toast.success("OTP resent successfully 📩");
+  //     } else {
+  //       toast.error(res.data.message || "Failed to resend OTP ❌");
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Resend failed ❌");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Verify OTP
   const handleVerifyOtp = async () => {
@@ -80,6 +86,7 @@ const AuthModal = () => {
       const res = await axios.post(`${BASE_URL}/api/auth/verify-otp`, {
         name: formData.name,
         email: formData.email,
+        mobile: formData.mobile,
         password: formData.password,
         otp: formData.otp,
       });
@@ -91,6 +98,7 @@ const AuthModal = () => {
         setFormData({
           name: "",
           email: "",
+          mobile: "",
           password: "",
           otp: "",
         });
@@ -112,7 +120,9 @@ const AuthModal = () => {
     setLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/api/auth/login`, {
-        email: loginData.email,
+        // email: loginData.email,
+        // mobile: loginData.mobile,
+        identifier: loginData.identifier,
         password: loginData.password,
       });
 
@@ -128,7 +138,7 @@ const AuthModal = () => {
           localStorage.setItem("user", JSON.stringify(user));
         }
 
-        setLoginData({ email: "", password: "" });
+        setLoginData({ email: "", mobile: "", password: "" });
 
         // Redirect based on role
         if (user.role === "admin") {
@@ -198,21 +208,38 @@ const AuthModal = () => {
                 Login
               </h3>
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="identifier"
                 onChange={handleLoginChange}
-                value={loginData.email}
-                placeholder="Email"
-                className="w-full border  border-gray-400 bg-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={loginData.identifier}
+                placeholder="Email / Mobile Number"
+                className="w-full border border-gray-400 bg-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
-              <input
-                type="password"
-                name="password"
-                onChange={handleLoginChange}
-                value={loginData.password}
-                placeholder="Password"
-                className="w-full border  border-gray-400 px-4 bg-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"} // 👈 show/hide toggle
+                  name="password"
+                  onChange={handleLoginChange}
+                  value={loginData.password}
+                  placeholder="Password"
+                  className="w-full border border-gray-400 px-4 bg-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
+                  disabled={loading}
+                />
+
+                {/* 👁 Eye Icon */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? (
+                    <AiOutlineEyeInvisible size={20} />
+                  ) : (
+                    <AiOutlineEye size={20} />
+                  )}
+                </button>
+              </div>
               <button
                 type="submit"
                 className="w-full bg-blue-400 text-white py-2 rounded-lg font-semibold shadow-sm hover:shadow-md transition flex items-center justify-center"
@@ -258,6 +285,41 @@ const AuthModal = () => {
                 disabled={loading}
               />
               <input
+                type="mobile"
+                name="mobile"
+                onChange={handleChange}
+                value={formData.mobile}
+                placeholder="Mobile Number"
+                className="w-full border  border-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                disabled={loading}
+              />
+
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"} // 👈 show/hide toggle
+                  name="password"
+                  onChange={handleChange}
+                  value={formData.password}
+                  placeholder="Password"
+                  className="w-full border border-gray-400 px-4 bg-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
+                  disabled={loading}
+                />
+
+                {/* 👁 Eye Icon */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? (
+                    <AiOutlineEyeInvisible size={20} />
+                  ) : (
+                    <AiOutlineEye size={20} />
+                  )}
+                </button>
+              </div>
+
+              {/* <input
                 type="password"
                 name="password"
                 onChange={handleChange}
@@ -265,7 +327,7 @@ const AuthModal = () => {
                 placeholder="Password"
                 className="w-full border px-4 py-2 rounded-lg   border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 disabled={loading}
-              />
+              /> */}
               <button
                 type="submit"
                 className="w-full bg-blue-400 text-white py-2 rounded-lg font-semibold shadow-sm hover:shadow-sm transition flex items-center justify-center"
@@ -285,7 +347,12 @@ const AuthModal = () => {
       {/* OTP Modal */}
       {showOtp && (
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/40 z-9999">
-          <div className="bg-white rounded-xl shadow-xl w-[90%] max-w-sm p-6 animate-fadeIn relative">
+          <div className="bg-white rounded-xl shadow-xl pt-10 w-[90%] max-w-sm p-6 animate-fadeIn relative">
+            <HiOutlineX
+              onClick={() => setShowOtp(false)}
+              disabled={loading}
+              className="inline-block ml-1 absolute right-5 top-5"
+            />
             <h1 className="text-center font-bold text-lg mb-2">
               Verify Your Email
             </h1>
@@ -300,7 +367,8 @@ const AuthModal = () => {
                 onChange={handleChange}
                 value={formData.otp}
                 placeholder="Enter OTP"
-                className="shadow-md w-full py-2 border border-gray-300 rounded-lg text-center"
+                // className="shadow-md w-full py-2 border border-gray-300 rounded-lg text-center"
+                className="shadow-md w-full py-2 border border-gray-300 rounded-lg text-center tracking-[0.5em]"
                 disabled={loading}
               />
               <button
@@ -314,15 +382,15 @@ const AuthModal = () => {
                   "Verify OTP"
                 )}
               </button>
-              <div className="flex justify-between mt-4">
+              {/* <div className="flex justify-between mt-4">
                 <button
                   onClick={() => setShowOtp(false)}
                   className="px-4 py-2 text-gray-600 border rounded-lg hover:bg-gray-100 transition"
                   disabled={loading}
-                >
-                  Close
-                </button>
-                {/* <button
+                  >
+                  Close 
+                </button> */}
+              {/* <button
                   onClick={handleResendOtp}
                   className="px-4 py-2 text-blue-500 border border-blue-400 rounded-lg hover:bg-blue-50 transition flex justify-center items-center"
                 >
@@ -332,7 +400,7 @@ const AuthModal = () => {
                     "Resend OTP"
                   )}
                 </button> */}
-              </div>
+              {/* </div> */}
             </div>
           </div>
         </div>

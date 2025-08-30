@@ -12,14 +12,14 @@ export async function POST(req) {
   await dbConnect();
 
   try {
-    const { name, email, password, otp } = await req.json();
+    const { name, email, mobile, password, otp } = await req.json();
 
     if (!email || !otp) {
       return errorResponse("Email and OTP are required", 422);
     }
 
     // Check OTP
-    const otpDoc = await Otp.findOne({ email, otp });
+    const otpDoc = await Otp.findOne({ email, mobile, otp });
     if (!otpDoc) {
       return errorResponse("Invalid or expired OTP", 400);
     }
@@ -35,6 +35,7 @@ export async function POST(req) {
     const user = await Signer.create({
       name,
       email,
+      mobile,
       password: hashedPassword,
       isVerified: true,
     });

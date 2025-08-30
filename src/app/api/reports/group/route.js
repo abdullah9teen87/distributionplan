@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import Group from "@/models/Group";
+import DistributorGroup from "@/models/DistributorGroup";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 export async function GET(req) {
@@ -17,9 +17,9 @@ export async function GET(req) {
       };
     }
 
-    const data = await Group.find(filter).lean();
+    const data = await DistributorGroup.find(filter).lean();
 
-    return successResponse(data, "Group report fetched successfully");
+    return successResponse(data, "Distributor Group report fetched successfully");
   } catch (err) {
     console.error(err);
     return errorResponse(err, 500);

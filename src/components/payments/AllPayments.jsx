@@ -78,13 +78,13 @@ const columns = [
 
         <div className="flex items-center gap-3">
           <Link
-            href="/payment/newpayment"
+            href="/dashboard/admin/payment/newpayment"
             className="hidden sm:flex items-center space-x-2 bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded shadow transition text-sm"
           >
             <HiPlusCircle size={20} />
             <span>New Group</span>
           </Link>
-          <Link href="/payment/newpayment" className="sm:hidden text-gray-600">
+          <Link href="/dashboard/admin/payment/newpayment" className="sm:hidden text-gray-600">
             <HiPlusCircle size={24} />
           </Link>
 
@@ -95,7 +95,7 @@ const columns = [
             <HiSearch size={20} />
             <span>Search Group</span>
           </Link>
-          <Link href="/payment/search" className="sm:hidden text-gray-800">
+          <Link href="/dashboard/admin/payment/search" className="sm:hidden text-gray-800">
             <HiSearch size={24} />
           </Link>
         </div>

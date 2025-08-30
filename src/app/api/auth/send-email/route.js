@@ -11,7 +11,7 @@ export async function POST(req) {
   await dbConnect();
 
   try {
-    const { name, email, type = "verify-email" } = await req.json();
+    const { name, email, mobile, type = "verify-email" } = await req.json();
 
     if (!email) {
       return errorResponse("Email is required", 422);
@@ -22,7 +22,7 @@ export async function POST(req) {
 
     // Save OTP in DB (purana delete karke naya save)
     await Otp.deleteMany({ email });
-    await Otp.create({ email, otp });
+    await Otp.create({ email, mobile, otp });
 
     // Email content based on type
     let subject = "";

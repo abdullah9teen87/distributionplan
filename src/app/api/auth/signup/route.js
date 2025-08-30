@@ -96,8 +96,8 @@ export async function POST(req) {
   await dbConnect();
 
   try {
-    const { name, email, password } = await req.json();
-
+    const { name, email, mobile, password } = await req.json();
+    console.log("name, email, mobile", name, email, mobile)
     if (!email) {
       return errorResponse("Email is required", 422);
     }
@@ -113,7 +113,7 @@ export async function POST(req) {
 
     // ✅ Save OTP in DB (purana delete karke naya save)
     await Otp.deleteMany({ email });
-    await Otp.create({ email, otp });
+    await Otp.create({ email, mobile, otp });
 
     // ✅ Send OTP via email
     const transporter = nodemailer.createTransport({
